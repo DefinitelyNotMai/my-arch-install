@@ -39,8 +39,8 @@ ln -s ~/files/repos/dotfiles/config/shell ~/.config/shell
 ln -s ~/files/repos/dotfiles/config/x11 ~/.config/x11
 ln -s ~/files/repos/dotfiles/config/zathura ~/.config/zathura
 ln -s ~/files/repos/dotfiles/config/zsh ~/.config/zsh
-ln -s ~/files/repos/dotfiles/bin ~/.local/bin
-ln -s ~/config/shell/profile ~/.zprofile
+ln -s ~/files/repos/dotfiles/local/bin ~/.local/bin
+ln -s ~/.config/shell/profile ~/.zprofile
 
 # Install vim-plug
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
