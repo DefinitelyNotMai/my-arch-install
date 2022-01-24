@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# ParallelDownloads = 15 in pacman.conf
+# ParallelDownloads = 15 and enable multilib in pacman.conf
 sed -i 's/^#ParallelDownloads = 5$/ParallelDownloads = 15/' /etc/pacman.conf
+sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 
 # Use all cores for compilation and compression
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
@@ -30,7 +31,7 @@ echo "almalexia" >> /etc/hostname
 passwd
 
 # Install some packages
-pacman -S grub efibootmgr os-prober networkmanager mtools dosfstools ufw dash \
+pacman -Sy grub efibootmgr os-prober networkmanager mtools dosfstools ufw dash \
     alsa-utils pipewire pipewire-alsa pipewire-pulse pipewire-jack ntfs-3g
 
 # Relink dash to /bin/sh
