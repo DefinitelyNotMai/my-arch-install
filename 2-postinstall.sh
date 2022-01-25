@@ -46,7 +46,7 @@ ln -s ~/.config/shell/profile ~/.zprofile
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # Install my needed packages
-sudo pacman -Sy xorg-server xorg-xinit brightnessctl wmname libnotify mpd mpv \
+sudo pacman -Sy xorg-server xorg-xinit wmname libnotify mpd mpv \
     ncmpcpp unclutter sxiv libreoffice-fresh dunst gimp lxappearance htop bc \
     keepassxc pcmanfm zathura zathura-pdf-mupdf newsboat scrot obs-studio \
     pulsemixer jdk-openjdk jre-openjdk jre-openjdk-headless xwallpaper p7zip \
@@ -92,7 +92,7 @@ echo "crypt-hdd /dev/sda1 /etc/navi" | sudo tee -a /etc/crypttab
 echo "/dev/mapper/crypt-hdd /mnt/slowboi ext4 defaults 0 0" | sudo tee -a /etc/fstab
 
 # Remove orphan packages
-sudo pacman -Rns "$(pacman -Qtdq)"
+sudo pacman -Rns $(pacman -Qtdq)
 
 # Change my shell to zsh
 chsh -s /usr/bin/zsh
