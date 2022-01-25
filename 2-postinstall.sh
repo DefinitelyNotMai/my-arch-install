@@ -52,9 +52,8 @@ sudo pacman -Sy xorg-server xorg-xinit xorg-xev wmname libnotify mpd mpv \
     pulsemixer jdk-openjdk jre-openjdk jre-openjdk-headless xwallpaper p7zip \
     unzip unrar rust go ttf-liberation ttf-nerd-fonts-symbols ueberzug zsh \
     zsh-syntax-highlighting fzf youtube-dl ffmpegthumbnailer highlight odt2txt \
-    catdoc docx2txt perl-image-exiftool python-pdftotext android-tools \
-    noto-fonts-emoji adobe-source-han-sans-jp-fonts arc-icon-theme \
-    adobe-source-han-sans-kr-fonts adobe-source-han-sans-cn-fonts virtualbox \
+    catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
+    noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox virtualbox \
     virtualbox-host-modules-arch virtualbox-guest-iso tor torbrowser-launcher
 
 # Install AUR helper and AUR packages
@@ -67,7 +66,6 @@ paru freetube-bin
 paru gtk-theme-arc-gruvbox-git
 paru lf-git
 paru otpclient
-paru simple-mtpfs
 paru ttf-scientifica
 sudo sed -i '35s/.//' /etc/paru.conf
 sudo sed -i '36s/.*/FileManager = lfrun/' /etc/paru.conf
