@@ -22,17 +22,20 @@ hwclock --systohc
 sed -i '177s/.//' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" >> /etc/locale.conf
-echo "almalexia" >> /etc/hostname
+echo "Enter desired hostname: "
+read hsn
+echo "$hsn" >> /etc/hostname
 {
     echo "127.0.0.1    localhost"
     echo "::1          localhost"
-    echo "127.0.1.1    almalexia.localdomain    almalexia"
+    echo "127.0.1.1    $hsn.localdomain    $hsn"
 } >> /etc/hosts
+echo "Enter new password for root user"
 passwd
 
 # Install some packages
-pacman -Sy grub efibootmgr os-prober networkmanager mtools dosfstools ufw dash \
-    alsa-utils pipewire pipewire-alsa pipewire-pulse pipewire-jack ntfs-3g
+pacman -Sy grub efibootmgr networkmanager mtools dosfstools ntfs-3g ufw dash \
+    pipewire pipewire-pulse neovim wget man-db
 
 # Relink dash to /bin/sh
 ln -sfT dash /usr/bin/sh
@@ -41,7 +44,6 @@ printf "[Action]\nDescription = Re-pointing /bin/sh symlink to dash...\nWhen = P
 
 # Install grub
 sed -i '4s/5/-1/' /etc/default/grub
-sed -i '63s/.//' /etc/default/grub
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -51,8 +53,10 @@ systemctl enable fstrim.timer
 systemctl enable ufw.service
 
 # Add user
-useradd -m -G wheel mai
-passwd mai
+echo "Enter desired username: "
+read usn
+useradd -m -G wheel "$usn"
+passwd "$usn"
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 # Done
