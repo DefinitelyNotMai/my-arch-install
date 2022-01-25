@@ -73,7 +73,7 @@ sudo sed -i '35s/.//' /etc/paru.conf
 sudo sed -i '36s/.*/FileManager = lfrun/' /etc/paru.conf
 
 # Install my suckless tools
-cd ~/files/repos || exit
+mkdir ~/files/repos/suckless && cd ~/files/repos/suckless || exit
 git clone https://github.com/DefinitelyNotMai/dmenu.git
 git clone https://github.com/DefinitelyNotMai/dwm.git
 git clone https://github.com/DefinitelyNotMai/scroll.git
