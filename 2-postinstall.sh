@@ -54,11 +54,11 @@ sudo pacman -Sy xorg-server xorg-xinit xorg-xev wmname libnotify mpd mpv \
     zsh-syntax-highlighting fzf youtube-dl ffmpegthumbnailer highlight odt2txt \
     catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
     noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox virtualbox \
-    virtualbox-host-modules-arch virtualbox-guest-iso tor torbrowser-launcher
+    virtualbox-host-modules-arch virtualbox-guest-iso
 
 # Install AUR helper and AUR packages
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
-cd ~/.local/src/paru || exit
+cd ~/.local/src/paru
 makepkg -si
 sudo sed -i '17s/.//' /etc/paru.conf
 paru brave-bin
@@ -71,7 +71,7 @@ sudo sed -i '35s/.//' /etc/paru.conf
 sudo sed -i '36s/.*/FileManager = lfrun/' /etc/paru.conf
 
 # Install my suckless tools
-mkdir ~/files/repos/suckless && cd ~/files/repos/suckless || exit
+mkdir ~/files/repos/suckless && cd ~/files/repos/suckless
 git clone https://github.com/DefinitelyNotMai/dmenu.git
 git clone https://github.com/DefinitelyNotMai/dwm.git
 git clone https://github.com/DefinitelyNotMai/scroll.git
