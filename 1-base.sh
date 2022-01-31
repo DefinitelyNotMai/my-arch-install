@@ -34,7 +34,7 @@ passwd
 
 # Install some packages
 pacman -Sy grub efibootmgr networkmanager mtools dosfstools ntfs-3g ufw dash \
-    pipewire pipewire-pulse pipewire-jack neovim wget man-db
+    pipewire pipewire-pulse pipewire-jack neovim wget man-db linux-headers
 
 # Relink dash to /bin/sh
 ln -sfT dash /usr/bin/sh
