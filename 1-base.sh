@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Keyring
+pacman -Sy --noconfirm archlinux-keyring
+
 # ParallelDownloads = 15 and enable multilib in pacman.conf
 sed -i 's/^#ParallelDownloads = 5$/ParallelDownloads = 15/' /etc/pacman.conf
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
@@ -8,8 +11,8 @@ sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $(nproc) -z -)/g" /etc/makepkg.conf
 
-# Make a 2GB swapfile and set swappiness to 1
-dd if=/dev/zero of=/etc/swapfile bs=1M count=2048 status=progress
+# Make a 8GB swapfile and set swappiness to 1
+dd if=/dev/zero of=/etc/swapfile bs=1M count=8192 status=progress
 chmod 600 /etc/swapfile
 mkswap /etc/swapfile
 swapon /etc/swapfile
@@ -33,8 +36,9 @@ echo "Enter new password for root"
 passwd
 
 # Install some packages
-pacman -Sy grub efibootmgr networkmanager mtools dosfstools ntfs-3g ufw dash \
-    pipewire pipewire-pulse pipewire-jack neovim wget man-db linux-headers
+pacman -S --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
+    ufw dash pipewire pipewire-pulse pipewire-jack neovim wget man-db \
+    linux-headers reflector
 
 # Relink dash to /bin/sh
 ln -sfT dash /usr/bin/sh
@@ -48,13 +52,15 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # Enable services
 systemctl enable NetworkManager
 systemctl enable fstrim.timer
+systemctl enable reflector.timer
 systemctl enable ufw.service
 
 # Add user
 read -p "Enter desired username: " usn
-useradd -m -G wheel "$usn"
+useradd -m "$usn"
 echo "Enter password for $usn"
 passwd "$usn"
+usermod -a -G wheel mai
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 # Done

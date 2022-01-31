@@ -55,7 +55,7 @@ sudo pacman -Sy xorg-server xorg-xinit xorg-xev wmname libnotify mpd mpv \
     catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
     noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox virtualbox \
     virtualbox-host-modules-arch virtualbox-guest-iso libappindicator-gtk3 \
-    lib32-mesa wqy-zenhei steam pavucontrol
+    pavucontrol
 
 # Install AUR helper and AUR packages
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
