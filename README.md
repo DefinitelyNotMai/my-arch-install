@@ -1,7 +1,7 @@
 # my-arch-install
 Shell script I made to install Arch Linux.  
-0-preinstall.sh should be ran at the start.
-1-base.sh should be ran after chrooting into /mnt.
+0-preinstall.sh should be ran at the start.  
+1-base.sh should be ran after chrooting into /mnt.  
 2-postInstall.sh is for MY personal use but feel free to use it, be ready to make some edits in the script though.
 
 ## Who should use this?
