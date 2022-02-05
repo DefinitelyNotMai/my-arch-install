@@ -39,4 +39,4 @@ genfstab -U /mnt >> /mnt/etc/fstab
 mv /my-arch-install /mnt/tmp/my-arch-install
 
 # done
-printf "Pre-installation done! Run \"arch-chroot /mnt\", then run \"cd /tmp/arch-install && ./1-base.sh\""
+printf "Pre-installation done! Run \"arch-chroot /mnt\", then run \"cd /tmp/my-arch-install && ./1-base.sh\""
