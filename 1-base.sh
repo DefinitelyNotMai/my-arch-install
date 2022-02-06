@@ -1,17 +1,14 @@
-#!/bin/bash
-
-# install archlinux-keyring and reflector, and use reflector to generate mirrorlist
-reflector --latest 5 --sort rate --protocol https --country Germany --save /etc/pacman.d/mirrorlist --download-timeout 10
+#!/bin/sh
 
 # set ParallellDownloads to 15 and enable multilib repositories
-sed -i 's/^#ParallelDownloads = 5$/ParallelDownloads = 15/' /etc/pacman.conf
+sed -i 's/^#ParallelDownloads = 5/ParallelDownloads = 15/' /etc/pacman.conf
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 
 # use all cores for compilation and compression
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $(nproc) -z -)/g" /etc/makepkg.conf
 
-# make an 10GB swapfile and set swappiness to 1
+# make a 10GB swapfile and set swappiness to 1
 dd if=/dev/zero of=/etc/swapfile bs=1M count=10240 status=progress
 chmod 600 /etc/swapfile
 mkswap /etc/swapfile
@@ -28,12 +25,13 @@ printf "LANG=en_US.UTF-8" >> /etc/locale.conf
 read -p "Enter desired hostname: " hsn
 printf "%s" "$hsn" >> /etc/hostname
 printf "127.0.0.1    localhost\n::1          localhost\n127.0.1.1    %s.localdomain    %s" "$hsn" "$hsn" >> /etc/hosts
-printf "Enter new password for root"
+printf "Enter new password for root\n"
 passwd
 
 # install some packages
-pacman -S --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
-    ufw dash pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers
+pacman -Sy --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
+    ufw dash pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers \
+    reflector git wget neovim man-db
 
 # relink dash to /bin/sh and create hook to relink dash to /bin/sh everytime bash gets updated
 ln -sfT dash /usr/bin/sh
@@ -50,26 +48,24 @@ systemctl enable fstrim.timer
 systemctl enable reflector.timer
 systemctl enable ufw.service
 
-# add user
+# add user, assign to wheel, and allow any member of wheel group to execute sudo commands
 read -p "Enter desired username: " usn
 useradd -m "$usn"
-printf "Enter password for %s" "$usn"
+printf "Enter password for %s\n" "$usn"
 passwd "$usn"
 usermod -a -G wheel "$usn"
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 # prompt if user wants to use my personal postinstall script
 read -p "Would you like to use my personal postinstall script after restarting?(y/n): " ans
-if [[ $ans = y ]]; then
-    mkdir -p /home/"$usn"/files/repos
-    mv /tmp/my-arch-install /home/"$usn"/files/repos/.
-    chown -R "$usn":"$usn" /home/"$usn"/files
-    printf "You answered Yes. Run \"cd ~/files/repos/my-arch-install && ./2-postinstall.sh\" after rebooting."
-elif [[ $ans = n ]]; then
-    printf "You answered No."
-else
-    printf "Answered neither. Assuming your answer is No."
-fi
+case "$ans" in
+    y) mkdir -p /home/"$usn"/files/repos
+        mv /tmp/my-arch-install /home/"$usn"/files/repos/my-arch-install
+        chown -R "$usn":"$usn" /home/"$usn"/files
+        printf "You answered Yes. Run \"cd ~/files/repos/my-arch-install && ./2-postinstall.sh\" after rebooting." ;;
+    n) printf "You answered No." ;;
+    *) printf "Answered neither. Assuming your answer is No." ;;
+esac
 
 # done
-printf "Base installation done! Run \"exit\", then \"umount -R /mnt\", and \"reboot now\" :)"
+printf "\nBase installation done! Run \"exit\", then \"umount -a\", and \"reboot now\" :)\n"
