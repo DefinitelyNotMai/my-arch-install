@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# update system clock
-timedatectl set-ntp true
-
 # set mirrorlist
 reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 10
 

@@ -31,7 +31,7 @@ passwd
 # install some packages
 pacman -Sy --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
     ufw dash pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers \
-    reflector git wget neovim man-db
+    reflector git wget neovim man-db polkit
 
 # relink dash to /bin/sh and create hook to relink dash to /bin/sh everytime bash gets updated
 ln -sfT dash /usr/bin/sh
@@ -60,7 +60,7 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 read -p "Would you like to use my personal postinstall script after restarting?(y/n): " ans
 case "$ans" in
     y) mkdir -p /home/"$usn"/files/repos
-        mv /tmp/my-arch-install /home/"$usn"/files/repos/my-arch-install
+        mv /my-arch-install /home/"$usn"/files/repos/my-arch-install
         chown -R "$usn":"$usn" /home/"$usn"/files
         printf "You answered Yes. Run \"cd ~/files/repos/my-arch-install && ./2-postinstall.sh\" after rebooting." ;;
     n) printf "You answered No." ;;
