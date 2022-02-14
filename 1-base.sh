@@ -59,11 +59,11 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 # prompt if user wants to use my personal postinstall script
 read -p "Would you like to use my personal postinstall script after restarting?(y/n): " ans
 case "$ans" in
-    y) mkdir -p /home/"$usn"/files/repos
+    y|Y) mkdir -p /home/"$usn"/files/repos
         mv /my-arch-install /home/"$usn"/files/repos/my-arch-install
         chown -R "$usn":"$usn" /home/"$usn"/files
         printf "You answered Yes. Run \"cd ~/files/repos/my-arch-install && ./2-postinstall.sh\" after rebooting." ;;
-    n) printf "You answered No." ;;
+    n|N) printf "You answered No." ;;
     *) printf "Answered neither. Assuming your answer is No." ;;
 esac
 

@@ -88,8 +88,8 @@ cd ../slstatus && sudo make install
 cd ../st && sudo make install
 
 # automount my drives
-echo "crypt-hdd /dev/sda1 /etc/navi" | sudo tee -a /etc/crypttab
-echo "/dev/mapper/crypt-hdd /mnt/slowboi ext4 defaults 0 0" | sudo tee -a /etc/fstab
+printf "crypt-hdd /dev/sda1 /etc/navi\n" | sudo tee -a /etc/crypttab
+printf "/dev/mapper/crypt-hdd /mnt/slowboi ext4 defaults 0 0" | sudo tee -a /etc/fstab
 
 # remove orphan packages
 sudo pacman -Rns $(pacman -Qtdq)

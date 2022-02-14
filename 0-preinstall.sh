@@ -32,9 +32,10 @@ pacstrap /mnt base base-devel linux linux-firmware intel-ucode
 # generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
 
-# copy current mirrorlist to mounted root
+# copy current mirrorlist and cloned repo to mounted root
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+mv /my-arch-install /mnt/my-arch-install
 
 # done
 clear
-printf "Pre-installation done! Run \"arch-chroot /mnt\", then run \"cd /tmp/my-arch-install && ./1-base.sh\"\n"
+printf "Pre-installation done! Run \"arch-chroot /mnt\", then run \"./my-arch-install/1-base.sh\"\n"
