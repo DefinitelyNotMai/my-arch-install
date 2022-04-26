@@ -1,24 +1,26 @@
 # my-arch-install
-Shell script I made to install Arch Linux.  
-0-preinstall.sh should be ran at the start.  
-1-base.sh should be ran after chrooting into /mnt.  
-2-postInstall.sh is for MY personal use but feel free to use it, be ready to make some edits in the script though.
+Shell script I made to automate my Arch Linux install.  
 
 ## Who should use this?
-People who just want a kinda minimal installation of Arch going.
+Mainly for me but others are free to use this script.
 
 ## HEADS UP!
 This script:
-- only makes only 2 partitions: root and efi
+- only makes 2 partitions: root and efi
+- uses ext4 only, no btrfs or other filesystems.
 - mounts efi partition in /mnt/boot/efi
-- makes a 10GB swapfile, delete/comment it out before executing if not desired.
-- makes "dash" your "/bin/sh", delete/comment it out before executing if not desired.
+- makes a 10GB swapfile.
+- makes "dash" your "/bin/sh".
+- uses PipeWire as audio.
+- uses GRUB as the bootloader.
 
 ## Installation
 After Live ISO loads up, run the following commands:
 ```
+timedatectl set-ntp true
+pacman -Sy git
 git clone https://github.com/DefinitelyNotMai/my-arch-install.git
 cd my-arch-install
-chmod +x *.sh
-./0-preinstall.sh
+chmod +x install.sh
+./install.sh
 ```
