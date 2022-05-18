@@ -122,10 +122,9 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 read -p "Would you like to use my personal postinstall script after restarting?(y/n): " ans
 case "$ans" in
     y|Y) mkdir -p /home/"$usn"/files/repos
-        mv /my-arch-install /home/"$usn"/files/repos/my-arch-install
-        sed '1,/^# POSTINSTALLATION$/d' 1-base.sh > /home/"$usn"/files/repos/my-arch-install/1-base.sh
+        sed '1,/^# POSTINSTALLATION$/d' 1-base.sh > /home/"$usn"/files/repos/2-post.sh
         chown -R "$usn":"$usn" /home/"$usn"/files
-        printf "You answered Yes. Run \"cd ~/files/repos/my-arch-install && ./2-postinstall.sh\" after rebooting."
+        printf "You answered Yes. Run \"cd ~/files/repos/ && ./2-postinstall.sh\" after rebooting."
         exit ;;
     *) printf "You answered No."
         printf "\nBase installation done! Run \"umount -a\", and \"reboot now\" :)\n"
@@ -198,7 +197,6 @@ git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
 cd ~/.local/src/paru || exit
 makepkg -si
 sudo sed -i '17s/.//' /etc/paru.conf
-paru brave-bin
 paru freetube-bin
 paru gtk-theme-arc-gruvbox-git
 paru lf-git
@@ -225,6 +223,7 @@ cd ../st && sudo make install
 # automount my drives
 printf "crypt-hdd /dev/sda1 /etc/navi\n" | sudo tee -a /etc/crypttab
 printf "\n/dev/mapper/crypt-hdd /mnt/slowboi ext4 defaults 0 0" | sudo tee -a /etc/fstab
+printf "\n/dev/sdb3 /mnt/sanicfast ntfs defaults 0 0" | sudo tee -a /etc/fstab
 
 # remove orphan packages
 sudo pacman -Rns $(pacman -Qtdq)
