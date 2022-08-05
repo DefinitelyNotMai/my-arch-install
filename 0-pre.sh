@@ -205,13 +205,8 @@ sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
 # install my suckless tools
-mkdir ~/files/repos/suckless && cd ~/files/repos/suckless || exit
-git clone https://github.com/DefinitelyNotMai/dmenu.git
-git clone https://github.com/DefinitelyNotMai/dwm.git
-git clone https://github.com/DefinitelyNotMai/scroll.git
-git clone https://github.com/DefinitelyNotMai/slock.git
-git clone https://github.com/DefinitelyNotMai/slstatus.git
-git clone https://github.com/DefinitelyNotMai/st.git
+mkdir ~/files/repos && cd ~/files/repos || exit
+cp -r /mnt/usb/suckless .
 cd dmenu && sudo make install
 cd ../dwm && sudo make install
 cd ../scroll && sudo make install
