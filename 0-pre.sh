@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-# PREINSTALLATION
+# I. PREINSTALLATION
 # set mirrorlist
 reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 10
 
@@ -21,14 +21,14 @@ clear
 lsblk
 read -p "Enter your EFI partition(Ex. \"/dev/sda1\"): " ep
 read -p "Enter your root partition(Ex. \"/dev/sda2\"): " rp
-mkfs.vfat -F32 "$ep"
+mkfs.fat -F 32 "$ep"
 mkfs.ext4 "$rp"
 mount "$rp" /mnt
 mkdir -p /mnt/boot/efi
 mount "$ep" /mnt/boot/efi
 
 # install essential packages
-pacstrap /mnt base base-devel linux linux-firmware intel-ucode
+pacstrap /mnt base base-devel linux linux-firmware amd-ucode
 
 # generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -36,18 +36,18 @@ genfstab -U /mnt >> /mnt/etc/fstab
 # copy current mirrorlist and cloned repo to mounted root
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
-# pre-installation done
-printf "Pre-installation done! Performing Base install now..."
-clear
-
 # copy base install script to /mnt and execute it
 sed '1,/^# BASE$/d' 0-pre.sh > /mnt/1-base.sh
 chmod +x /mnt/1-base.sh
 arch-chroot /mnt ./1-base.sh
 exit
 
-# BASE
-#!/bin/sh
+# pre-installation done
+clear
+printf "Pre-installation done! Performing Base install now..."
+
+# II. BASE
+#!/bin/bash
 
 # enable and set ParallelDownloads to 15 and enable multilib repositories
 sed -i 's/^#ParallelDownloads = 5/ParallelDownloads = 15/' /etc/pacman.conf
@@ -57,8 +57,8 @@ sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $(nproc) -z -)/g" /etc/makepkg.conf
 
-# make a 10GB swapfile and set swappiness to 1
-dd if=/dev/zero of=/etc/swapfile bs=1M count=10240 status=progress
+# make a 2GB swapfile and set swappiness to 1
+dd if=/dev/zero of=/etc/swapfile bs=1M count=2048 status=progress
 chmod 600 /etc/swapfile
 mkswap /etc/swapfile
 swapon /etc/swapfile
@@ -140,13 +140,13 @@ sudo ufw enable
 # making directories
 mkdir ~/.config
 mkdir -p ~/.local/src ~/.local/share
-cd ~/.local/share && mkdir cargo go virtualbox wallpapers 
+cd ~/.local/share && mkdir cargo go wallpapers 
 cd ~/files && mkdir desktop documents downloads games music pictures public templates videos
 
 # make mount directories, mount flashdrive and copy files
-cd /mnt && sudo mkdir sanicfast slowboi usb
-sudo chown mai: sanicfast slowboi usb
-sudo chmod 750 sanicfast slowboi usb
+cd /mnt && sudo mkdir usb
+sudo chown mai: usb
+sudo chmod 750 usb
 sudo mount /dev/sdc1 /mnt/usb
 sudo cp /mnt/usb/.a/navi /etc/navi
 cp /mnt/usb/yes-man.jpg ~/.local/share/wallpapers/yes-man.jpg
@@ -160,6 +160,7 @@ export LESSHISTFILE="-"
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/files/repos/dotfiles
+ln -s ~/files/repos/dotfiles/config/alacritty ~/.config/alacritty
 ln -s ~/files/repos/dotfiles/config/dunst ~/.config/dunst
 ln -s ~/files/repos/dotfiles/config/gtk-2.0 ~/.config/gtk-2.0
 ln -s ~/files/repos/dotfiles/config/gtk-3.0 ~/.config/gtk-3.0
@@ -181,16 +182,15 @@ ln -s ~/.config/shell/profile ~/.zprofile
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # install packages I use
-sudo pacman -Sy xorg-server xorg-xinit xorg-xev wmname libnotify mpd mpv \
+sudo pacman -Sy --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
     ncmpcpp unclutter sxiv libreoffice-fresh dunst gimp lxappearance htop bc \
-    keepassxc pcmanfm zathura zathura-pdf-mupdf newsboat scrot obs-studio \
+    keepassxc pcmanfm zathura zathura-pdf-mupdf zathura-cb scrot obs-studio \
     pulsemixer jdk-openjdk jre-openjdk jre-openjdk-headless xwallpaper p7zip \
     unzip unrar rust go ttf-liberation ttf-nerd-fonts-symbols ueberzug zsh \
     zsh-syntax-highlighting ffmpegthumbnailer highlight odt2txt file-roller \
     catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
-    noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox virtualbox fzf \
-    virtualbox-host-modules-arch virtualbox-guest-iso libappindicator-gtk3 \
-    pavucontrol
+    noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox fzf alacritty \
+    libappindicator-gtk3 ttf-hack pavucontrol newsboat brightnessctl wmname
 
 # install AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
@@ -220,11 +220,6 @@ cd ../slock && sudo make install
 cd ../slstatus && sudo make install
 cd ../st && sudo make install
 
-# automount my drives
-printf "crypt-hdd /dev/sda1 /etc/navi\n" | sudo tee -a /etc/crypttab
-printf "\n/dev/mapper/crypt-hdd /mnt/slowboi ext4 defaults 0 0" | sudo tee -a /etc/fstab
-printf "\n/dev/sdb3 /mnt/sanicfast ntfs defaults 0 0" | sudo tee -a /etc/fstab
-
 # remove orphan packages
 sudo pacman -Rns $(pacman -Qtdq)
 
@@ -232,4 +227,5 @@ sudo pacman -Rns $(pacman -Qtdq)
 chsh -s /usr/bin/zsh
 
 # done
-echo "Post installation done! Run \"systemctl reboot\" and login. :)"
+clear
+printf "Post installation done! Run \"systemctl reboot\" and login. :)"

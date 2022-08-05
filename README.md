@@ -9,7 +9,7 @@ This script:
 - only makes 2 partitions: root and efi
 - uses ext4 only, no btrfs or other filesystems.
 - mounts efi partition in /mnt/boot/efi
-- makes a 10GB swapfile.
+- makes a 2GB swapfile.
 - makes "dash" your "/bin/sh".
 - uses PipeWire as audio.
 - uses GRUB as the bootloader.
@@ -21,6 +21,6 @@ timedatectl set-ntp true
 pacman -Sy git
 git clone https://github.com/DefinitelyNotMai/my-arch-install.git
 cd my-arch-install
-chmod +x install.sh
+chmod +x 0-pre.sh
 ./install.sh
 ```
