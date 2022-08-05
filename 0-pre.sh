@@ -201,7 +201,6 @@ paru freetube-bin
 paru gtk-theme-arc-gruvbox-git
 paru lf-git
 paru otpclient
-paru ttf-scientifica
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
