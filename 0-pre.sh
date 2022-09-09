@@ -137,7 +137,7 @@ case "$ans" in
     y|Y) mkdir -p /home/"$usn"/files/repos
         sed '1,/^# III. POSTINSTALLATION$/d' 1-base.sh > /home/"$usn"/files/repos/2-post.sh
         chown -R "$usn":"$usn" /home/"$usn"/files
-        printf "You answered Yes. Run \"cd ~/files/repos/ && ./2-postinstall.sh\" after rebooting."
+        printf "You answered Yes. Run \"umount -a\" and \"reboot now\", then \"cd ~/files/repos/ && chmod +x 2-post.sh && ./2-post.sh\" after rebooting."
         exit ;;
     *) printf "You answered No."
         printf "\nBase installation done! Run \"umount -a\", and \"reboot now\" :)\n"
@@ -158,9 +158,9 @@ cd ~/files && mkdir desktop documents downloads music pictures public templates 
 
 # make mount directories, mount flashdrive and copy files
 cd /mnt && sudo mkdir usb hdd
-sudo chown mai: usb
+sudo chown $(whoami): usb
 sudo chmod 750 usb
-sudo chown mai: hdd
+sudo chown $(whoami): hdd
 sudo chmod 750 hdd
 sudo mount /dev/sda1 /mnt/usb
 sudo cp /mnt/usb/.a/navi /etc/navi

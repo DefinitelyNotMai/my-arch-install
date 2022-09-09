@@ -6,10 +6,11 @@ Mainly for me but others are free to use this script.
 
 ## HEADS UP!
 This script:
-- only makes 2 partitions: root and efi
+- only makes 2 partitions: root and efi.
 - uses ext4 only, no btrfs or other filesystems.
-- mounts efi partition in /mnt/boot/efi
-- makes a 2GB swapfile.
+- encryption type used is LUKS on partition.
+- mounts efi partition in /mnt/boot
+- makes an 8GB swapfile.
 - makes "dash" your "/bin/sh".
 - uses PipeWire as audio.
 - uses GRUB as the bootloader.
