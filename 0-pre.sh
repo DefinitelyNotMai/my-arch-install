@@ -135,7 +135,7 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 read -p "Would you like to use my personal postinstall script after restarting?(y/n): " ans
 case "$ans" in
     y|Y) mkdir -p /home/"$usn"/files/repos
-        sed '1,/^# III. POSTINSTALLATION$/d' 1-base.sh > /home/"$usn"/files/repos/2-post.sh
+        sed '1,/^# III. POSTINSTALLATION$/d' /1-base.sh > /home/"$usn"/files/repos/2-post.sh
         chown -R "$usn":"$usn" /home/"$usn"/files
         printf "You answered Yes. Run \"umount -a\" and \"reboot now\", then \"cd ~/files/repos/ && chmod +x 2-post.sh && ./2-post.sh\" after rebooting."
         exit ;;
