@@ -136,6 +136,7 @@ read -p "Would you like to use my personal postinstall script after restarting?(
 case "$ans" in
     y|Y) mkdir -p /home/"$usn"/files/repos
         sed '1,/^# III. POSTINSTALLATION$/d' /1-base.sh > /home/"$usn"/files/repos/2-post.sh
+        rm /1-base.sh
         chown -R "$usn":"$usn" /home/"$usn"/files
         printf "You answered Yes. Run \"umount -a\" and \"reboot now\", then \"cd ~/files/repos/ && chmod +x 2-post.sh && ./2-post.sh\" after rebooting."
         exit ;;
@@ -154,7 +155,7 @@ sudo ufw enable
 mkdir ~/.config
 mkdir -p ~/.local/src ~/.local/share
 cd ~/.local/share && mkdir cargo go wallpapers 
-cd ~/files && mkdir desktop documents downloads music pictures public templates videos
+cd ~/files && mkdir -p desktop documents downloads music pictures/scrot-screenshots public templates videos
 
 # make mount directories, mount flashdrive and copy files
 cd /mnt && sudo mkdir usb hdd
@@ -205,7 +206,7 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
     zsh-syntax-highlighting ffmpegthumbnailer highlight odt2txt file-roller \
     catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
     noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox fzf alacritty \
-    libappindicator-gtk3 ttf-hack pavucontrol newsboat brightnessctl wmname
+    libappindicator-gtk3 ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname
 
 # install AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
