@@ -2,7 +2,7 @@
 
 # I. PREINSTALLATION
 # set mirrorlist
-reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 10
+reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 20
 
 # enable and set ParallelDownloads to 15
 sed -i "s/^#ParallelDownloads = 5/ParallelDownloads = 15/" /etc/pacman.conf
@@ -32,9 +32,9 @@ mount "$ep" /mnt/boot
 # Check if processor is AMD or Intel
 cpu=$(grep vendor_id /proc/cpuinfo)
 if [[ "$cpu" ==  *"AuthenticAMD"* ]]; then
-    microcode=amd-ucode
+  microcode=amd-ucode
 else
-    microcode=intel-ucode
+  microcode=intel-ucode
 fi
 
 # install essential packages
@@ -49,12 +49,13 @@ cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 # copy base install script to /mnt and execute it
 sed '1,/^# II. BASE$/d' 0-pre.sh > /mnt/1-base.sh
 chmod +x /mnt/1-base.sh
-arch-chroot /mnt ./1-base.sh
-exit
 
 # pre-installation done
 clear
 printf "Pre-installation done! Performing Base install now..."
+sleep 3
+arch-chroot /mnt ./1-base.sh
+exit
 
 # II. BASE
 #!/bin/bash
@@ -91,11 +92,12 @@ passwd
 
 # install some packages
 pacman -S --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
-    ufw dash pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers \
-    reflector git wget neovim man-db polkit
+  ufw dash pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers \
+  reflector git wget neovim man-db polkit
 
 # open mkinitcpio.conf
 sed -i "s/HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
+sed -i "s/MODULES=()/MODULES=(vfio_pci vfio vfio_iommu_type1 vfio_virqfd)/" /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 # relink dash to /bin/sh and create hook to relink dash to /bin/sh everytime bash gets updated
@@ -109,6 +111,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # run blkid and output file to /tmp for reference to be used in setting kernel parameter
 blkid > /tmp/blkid.txt
+lspci -nnk >> /tmp/blkid.txt
 printf "cryptdevice=UUID=device-UUID:crypt-root root=/dev/mapper/crypt-root" >> /tmp/blkid.txt
 nvim /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
@@ -134,15 +137,15 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 # prompt if user wants to use my personal postinstall script
 read -p "Would you like to use my personal postinstall script after restarting?(y/n): " ans
 case "$ans" in
-    y|Y) mkdir -p /home/"$usn"/files/repos
-        sed '1,/^# III. POSTINSTALLATION$/d' /1-base.sh > /home/"$usn"/files/repos/2-post.sh
-        rm /1-base.sh
-        chown -R "$usn":"$usn" /home/"$usn"/files
-        printf "You answered Yes. Run \"umount -a\" and \"reboot now\", then \"cd ~/files/repos/ && chmod +x 2-post.sh && ./2-post.sh\" after rebooting."
-        exit ;;
-    *) printf "You answered No."
-        printf "\nBase installation done! Run \"umount -a\", and \"reboot now\" :)\n"
-        exit ;;
+  y|Y) mkdir -p /home/"$usn"/.local/src/DefinitelyNotMai
+    sed '1,/^# III. POSTINSTALLATION$/d' /1-base.sh > /home/"$usn"/.local/src/DefinitelyNotMai/2-post.sh
+    rm /1-base.sh
+    chown -R "$usn":"$usn" /home/"$usn"/.local
+    printf "You answered Yes. Run \"umount -a\" and \"reboot now\", then \"cd ~/.local/src/ && chmod +x 2-post.sh && ./2-post.sh\" after rebooting."
+    exit ;;
+  *) printf "You answered No."
+    printf "\nBase installation done! Run \"umount -a\", and \"reboot now\" :)\n"
+    exit ;;
 esac
 
 # III. POSTINSTALLATION
@@ -153,15 +156,14 @@ sudo ufw enable
 
 # making directories
 mkdir ~/.config
-mkdir -p ~/.local/src ~/.local/share
-cd ~/.local/share && mkdir cargo go wallpapers 
-cd ~/files && mkdir -p desktop documents downloads music pictures/scrot-screenshots public templates videos
+mkdir -p ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers 
+mkdir -p ~/documents ~/downloads ~/music ~/pictures/scrot-screenshots ~/videos
 
 # make mount directories, mount flashdrive and copy files
-cd /mnt && sudo mkdir usb hdd
-sudo chown $(whoami): usb
+sudo mkdir /mnt/usb /mnt/hdd
+sudo chown $(whoami): /mnt/usb
 sudo chmod 750 usb
-sudo chown $(whoami): hdd
+sudo chown $(whoami): /mnt/hdd
 sudo chmod 750 hdd
 sudo mount /dev/sda1 /mnt/usb
 sudo cp /mnt/usb/.a/navi /etc/navi
@@ -175,38 +177,37 @@ export GOPATH="$HOME/.local/share/go"
 export LESSHISTFILE="-"
 
 # clone and symlink my dotfiles
-git clone https://github.com/DefinitelyNotMai/dotfiles ~/files/repos/dotfiles
-ln -s ~/files/repos/dotfiles/config/alacritty ~/.config/alacritty
-ln -s ~/files/repos/dotfiles/config/dunst ~/.config/dunst
-ln -s ~/files/repos/dotfiles/config/gtk-2.0 ~/.config/gtk-2.0
-ln -s ~/files/repos/dotfiles/config/gtk-3.0 ~/.config/gtk-3.0
-ln -s ~/files/repos/dotfiles/config/lf ~/.config/lf
-ln -s ~/files/repos/dotfiles/config/mpd ~/.config/mpd
-ln -s ~/files/repos/dotfiles/config/mpv ~/.config/mpv
-ln -s ~/files/repos/dotfiles/config/ncmpcpp ~/.config/ncmpcpp
-ln -s ~/files/repos/dotfiles/config/newsboat ~/.config/newsboat
-ln -s ~/files/repos/dotfiles/config/nvim ~/.config/nvim
-ln -s ~/files/repos/dotfiles/config/shell ~/.config/shell
-ln -s ~/files/repos/dotfiles/config/x11 ~/.config/x11
-ln -s ~/files/repos/dotfiles/config/user-dirs.dirs ~/.config/user-dirs.dirs
-ln -s ~/files/repos/dotfiles/config/zathura ~/.config/zathura
-ln -s ~/files/repos/dotfiles/config/zsh ~/.config/zsh
-ln -s ~/files/repos/dotfiles/local/bin ~/.local/bin
+git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/alacritty ~/.config/alacritty
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/dunst ~/.config/dunst
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0 ~/.config/gtk-2.0
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0 ~/.config/gtk-3.0
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/lf ~/.config/lf
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpd ~/.config/mpd
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpv ~/.config/mpv
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/ncmpcpp ~/.config/ncmpcpp
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/newsboat ~/.config/newsboat
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim ~/.config/nvim
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/shell ~/.config/shell
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/x11 ~/.config/x11
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/user-dirs.dirs ~/.config/user-dirs.dirs
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zathura ~/.config/zathura
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zsh ~/.config/zsh
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin ~/.local/bin
 ln -s ~/.config/shell/profile ~/.zprofile
-
-# install vim-plug for neovim
-#sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # install packages I use
 sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
-    ncmpcpp unclutter sxiv libreoffice-fresh dunst gimp lxappearance htop bc \
-    keepassxc pcmanfm zathura zathura-pdf-mupdf zathura-cb scrot obs-studio \
-    pulsemixer jdk-openjdk jre-openjdk jre-openjdk-headless xwallpaper p7zip \
-    unzip unrar rust go ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug zsh \
-    zsh-syntax-highlighting ffmpegthumbnailer highlight odt2txt file-roller \
-    catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
-    noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox fzf alacritty \
-    libappindicator-gtk3 ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname
+  ncmpcpp unclutter sxiv libreoffice-fresh dunst gimp lxappearance htop bc \
+  keepassxc pcmanfm zathura zathura-pdf-mupdf zathura-cb scrot obs-studio \
+  pulsemixer jdk-openjdk jre-openjdk jre-openjdk-headless xwallpaper p7zip \
+  unzip unrar rust go ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug zsh \
+  zsh-syntax-highlighting ffmpegthumbnailer highlight odt2txt file-roller \
+  catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
+  noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox fzf alacritty \
+  libappindicator-gtk3 ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
+  npm ripgrep time tree libxpresent neofetch openssh spice-protocol cmake qemu \
+  libvirt edk2-ovmf virt-manager iptables-nft dnsmasq
 
 # install AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
@@ -221,7 +222,7 @@ sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
 # install my suckless tools
-cd ~/files/repos || exit
+cd ~/.local/src/DefinitelyNotMai/ || exit
 git clone https://github.com/DefinitelyNotMai/dmenu
 git clone https://github.com/DefinitelyNotMai/dwm
 git clone https://github.com/DefinitelyNotMai/scroll
@@ -234,6 +235,12 @@ cd ../scroll && sudo make install
 cd ../slock && sudo make install
 cd ../slstatus && sudo make install
 cd ../st && sudo make install
+
+# enable services for virt-manager
+sudo systemctl enable libvirtd.service
+sudo systemctl enable virtlogd.socket
+sudo virsh net-autostart default
+sudo virsh net-start default
 
 # remove orphan packages
 sudo pacman -Rns $(pacman -Qtdq)
