@@ -157,7 +157,7 @@ sudo ufw enable
 # making directories
 mkdir ~/.config
 mkdir -p ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers 
-mkdir -p ~/documents ~/downloads ~/music ~/pictures/scrot-screenshots ~/videos
+mkdir -p ~/documents ~/downloads ~/music ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos
 
 # make mount directories, mount flashdrive and copy files
 sudo mkdir /mnt/usb /mnt/hdd
