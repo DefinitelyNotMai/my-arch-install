@@ -111,7 +111,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # run blkid and output file to /tmp for reference to be used in setting kernel parameter
 blkid > /tmp/blkid.txt
-lspci -nnk >> /tmp/blkid.txt
+lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
 printf "cryptdevice=UUID=device-UUID:crypt-root root=/dev/mapper/crypt-root" >> /tmp/blkid.txt
 nvim /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
@@ -204,10 +204,10 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   unzip unrar rust go ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug zsh \
   zsh-syntax-highlighting ffmpegthumbnailer highlight odt2txt file-roller \
   catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
-  noto-fonts-emoji noto-fonts-cjk arc-icon-theme firefox fzf alacritty \
+  noto-fonts-emoji noto-fonts-cjk firefox fzf alacritty \
   libappindicator-gtk3 ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
   npm ripgrep time tree libxpresent neofetch openssh spice-protocol cmake qemu \
-  libvirt edk2-ovmf virt-manager iptables-nft dnsmasq
+  libvirt edk2-ovmf virt-manager iptables-nft dnsmasq openssh
 
 # install AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
@@ -215,7 +215,9 @@ cd ~/.local/src/paru || exit
 makepkg -si
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
 paru freetube-bin
-paru gtk-theme-arc-gruvbox-git
+paru dracula-icons-git
+paru dracula-cursors-git
+paru dracula-gtk-theme-git
 paru lf-git
 paru otpclient
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
