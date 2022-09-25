@@ -111,8 +111,8 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # run blkid and output file to /tmp for reference to be used in setting kernel parameter
 blkid > /tmp/blkid.txt
-lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
 printf "cryptdevice=UUID=device-UUID:crypt-root root=/dev/mapper/crypt-root" >> /tmp/blkid.txt
+lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
 nvim /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -162,9 +162,9 @@ mkdir -p ~/documents ~/downloads ~/music ~/pictures/mpv-screenshots ~/pictures/s
 # make mount directories, mount flashdrive and copy files
 sudo mkdir /mnt/usb /mnt/hdd
 sudo chown $(whoami): /mnt/usb
-sudo chmod 750 usb
+sudo chmod 750 /mnt/usb
 sudo chown $(whoami): /mnt/hdd
-sudo chmod 750 hdd
+sudo chmod 750 /mnt/hdd
 sudo mount /dev/sda1 /mnt/usb
 sudo cp /mnt/usb/.a/navi /etc/navi
 cp /mnt/usb/yes-man.jpg ~/.local/share/wallpapers/yes-man.jpg
@@ -206,8 +206,7 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
   noto-fonts-emoji noto-fonts-cjk firefox fzf alacritty \
   libappindicator-gtk3 ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
-  npm ripgrep time tree libxpresent neofetch openssh spice-protocol cmake qemu \
-  libvirt edk2-ovmf virt-manager iptables-nft dnsmasq openssh
+  npm ripgrep time tree neofetch openssh cmake
 
 # install AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
@@ -237,12 +236,6 @@ cd ../scroll && sudo make install
 cd ../slock && sudo make install
 cd ../slstatus && sudo make install
 cd ../st && sudo make install
-
-# enable services for virt-manager
-sudo systemctl enable libvirtd.service
-sudo systemctl enable virtlogd.socket
-sudo virsh net-autostart default
-sudo virsh net-start default
 
 # remove orphan packages
 sudo pacman -Rns $(pacman -Qtdq)
