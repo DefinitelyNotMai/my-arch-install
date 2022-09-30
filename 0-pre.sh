@@ -14,7 +14,6 @@ pacman -Sy --noconfirm archlinux-keyring
 clear
 lsblk
 read -p "Enter drive to format(Ex. \"/dev/sda\" OR \"/dev/nvme0n1\"): " dr
-gdisk "$dr"
 sgdisk -Z "$dr"
 sgdisk -a 2048 -o "$dr"
 
@@ -123,7 +122,7 @@ printf "[Trigger]\nType = Package\nOperation = Install\nOperation = Upgrade\nTar
 
 # remove grub timeout and install grub
 sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=-1/' /etc/default/grub
-sed -i "s%GRUB_CMDLINE_LINUX=\"%GRUB_CMDLINE_LINUX=\"cryptdevice=UUID="$enc_dr_uuid":crypt-root root=/dev/mapper/crypt-root%g" grub
+sed -i "s%GRUB_CMDLINE_LINUX=\"%GRUB_CMDLINE_LINUX=\"cryptdevice=UUID="$enc_dr_uuid":crypt-root root=/dev/mapper/crypt-root%g" /etc/default/grub
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
