@@ -1,7 +1,42 @@
 #!/bin/bash
 
-# I. PREINSTALLATION
-# set mirrorlist
+##### PRE INSTALLATION START #####
+# prompt for user to enter desired hostname
+printf "Enter desired hostname: " && read -r hsn
+while ! printf "%s" "$hsn" | grep -q "^[a-z][a-z0-9-]*$"; do
+    printf "Error! Invalid hostname. Try again: " && read -r hsn
+done
+
+# prompt for user to enter desired password for root
+printf "Enter password for root: " && read -rs rpass1
+printf "\nRe-enter password: " && read -rs rpass2
+while [ "$rpass1" != "$rpass2" ]; do
+    unset rpass2
+    printf "\nError! Passwords don't match. Try again: " && read -rs rpass1
+    printf "\nRe-enter password: " && read -rs rpass2
+done
+
+# prompt for user to enter desired username for personal user
+printf "Enter desired username: " && read -r usn
+while ! echo "%s" "$usn" | grep -q "^[a-z_][a-z0-9_-]*$"; do
+    printf "Error! Invalid username. Try again: " && read -r usn
+done
+
+# prompt for user to enter desired password for personal user
+printf "Enter password for %s: " "$usn" && read -rs pass1
+printf "\nRe-enter password: " && read -rs pass2
+while [ "$pass1" != "$pass2" ]; do
+    unset pass2
+    printf "\nError! Passwords don't match. Try again: " && read -rs pass1
+    printf "\nRe-enter password: " && read -rs pass2
+done
+
+# print set values to "vars" file to be sourced as variables on base installation
+printf "hsn=%s\nrpass1=%s\nrpass2=%s\n" "$hsn" "$rpass1" >> /vars
+printf "usn=%s\npass1=%s\n" "$usn" "$pass1" >> /vars
+
+# update mirrorlist
+printf "Updating mirrorlist with reflector. Please wait...\n"
 reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 20
 
 # enable and set ParallelDownloads to 15
@@ -13,25 +48,24 @@ pacman -Sy --noconfirm archlinux-keyring
 # format disk
 clear
 lsblk
-read -p "Enter drive to format(Ex. \"/dev/sda\" OR \"/dev/nvme0n1\"): " dr
+printf "Enter drive to format(Ex. \"/dev/sda\" OR \"/dev/nvme0n1\"): " && read -r dr
 sgdisk -Z "$dr"
 sgdisk -a 2048 -o "$dr"
 
 # create partitions
 sgdisk -n 1::+300M --typecode=1:ef00 "$dr"
-sgdisk -n 2::-0 --typecode=1:8300 "$dr"
+sgdisk -n 2::-0 --typecode=2:8300 "$dr"
 
 # create filesystems
 clear
 lsblk
-if [[ "$dr" =~ "nvme" ]]; then
-    bp="$dr"p1
-    rp="$dr"p2
-else
-    bp="$dr"1
-    rp="$dr"2
-fi
+case "$dr" in
+    "nvme") bp="$dr"p1 && rp="$dr"p2 ;;
+    *) bp="$dr"1 && rp="$dr"2 ;;
+esac
 mkfs.vfat -F32 "$bp"
+
+# encrypt root partition and mount both partitions
 cryptsetup -y -v luksFormat "$rp"
 cryptsetup open "$rp" crypt-root
 mkfs.ext4 /dev/mapper/crypt-root
@@ -41,11 +75,10 @@ mount "$bp" /mnt/boot
 
 # check if processor is AMD or Intel
 cpu=$(grep vendor_id /proc/cpuinfo)
-if [[ "$cpu" ==  *"AuthenticAMD"* ]]; then
-    microcode=amd-ucode
-elif [[ "$cpu" == *"GenuineIntel"* ]]; then
-    microcode=intel-ucode
-fi
+case "$cpu" in
+    *AuthenticAMD) microcode=amd-ucode ;;
+    *GenuineIntel) microcode=intel-ucode ;;
+esac
 
 # install essential packages
 pacstrap /mnt base base-devel linux linux-firmware "$microcode"
@@ -56,25 +89,31 @@ genfstab -U /mnt >> /mnt/etc/fstab
 # copy current mirrorlist to mounted root
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
-# copy base install script to /mnt and execute it
-sed "1,/^# II. BASE$/d" 0-pre.sh > /mnt/1-base.sh
-echo enc_dr_uuid=$(blkid -s UUID -o value "$rp") >> /mnt/enc_uuid
+# add variable for cryp-root UUID
+printf "enc_dr_uuid=" >> /vars
+blkid -s UUID -o value "$rp" >> /vars
+
+# copy vars to source for variables to be used in Base Installation
+cp /vars /mnt/vars
+
+# copy base install script to /mnt and make it executable
+sed "1,/^##### BASE INSTALLATION START#####$/d" 0-pre.sh > /mnt/1-base.sh
 chmod +x /mnt/1-base.sh
 
 # pre-installation done
 clear
-printf "Pre-installation done! Performing Base install now..."
+printf "Pre-installation done! Performing Base install now...\n"
 sleep 3
 arch-chroot /mnt ./1-base.sh
 exit
 
-# II. BASE
-#!/bin/bash
+##### BASE INSTALLATION START #####
+#!/bin/sh
 
-# source enc_uuid, for kernel parameters
-source /enc_uuid
+# source vars for hostname, username, and kernel parameters
+. vars
 
-# enable and set ParallelDownloads to 15 and enable multilib repositories
+# enable and set ParallelDownloads to 15
 sed -i 's/^#ParallelDownloads = 5/ParallelDownloads = 15/' /etc/pacman.conf
 
 # use all cores for compilation and compression
@@ -82,12 +121,10 @@ sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $(nproc) -z -)/g" /etc/makepkg.conf
 
 # make an 8GB encryoted swapfile and set swappiness to 1
-cd /opt
+cd /opt || exit
 dd if=/dev/zero of=swap bs=1M count=8192 status=progress
 cryptsetup --type plain -d /dev/urandom open swap swap
-chmod 600 swap
-mkswap swap
-swapon swap
+chmod 600 swap && mkswap swap && swapon swap
 printf "swap /opt/swap /dev/urandom swap\n" >> /etc/crypttab
 printf "/dev/mapper/swap none swap sw 0 0\n" >> /etc/fstab
 printf "vm.swappiness=1\n" >> /etc/sysctl.d/99-swappiness.conf
@@ -98,11 +135,9 @@ hwclock --systohc
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 printf "LANG=en_US.UTF-8\n" >> /etc/locale.conf
-read -p "Enter desired hostname: " hsn
-printf "%s" "$hsn\n" >> /etc/hostname
+printf "%s\n" "$hsn" >> /etc/hostname
 printf "127.0.0.1    localhost\n::1          localhost\n127.0.1.1    %s.localdomain    %s\n" "$hsn" "$hsn" >> /etc/hosts
-printf "Enter new password for root\n"
-passwd
+printf "root:$rpass1" | chpasswd
 
 # install some packages
 pacman -S --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
@@ -122,14 +157,14 @@ printf "[Trigger]\nType = Package\nOperation = Install\nOperation = Upgrade\nTar
 
 # remove grub timeout and install grub
 sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=-1/' /etc/default/grub
-sed -i "s%GRUB_CMDLINE_LINUX=\"%GRUB_CMDLINE_LINUX=\"cryptdevice=UUID="$enc_dr_uuid":crypt-root root=/dev/mapper/crypt-root%g" /etc/default/grub
+sed -i "s%GRUB_CMDLINE_LINUX=\"%GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$enc_dr_uuid:crypt-root root=/dev/mapper/crypt-root%g" /etc/default/grub
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough
 #lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
 #nvim /etc/default/grub
-grub-mkconfig -o /boot/grub/grub.cfg
+#grub-mkconfig -o /boot/grub/grub.cfg
 
 # enable services
 systemctl enable NetworkManager
@@ -142,27 +177,32 @@ sed -i 's/--latest 5/--latest 10/' /etc/xdg/reflector/reflector.conf
 sed -i 's/--sort age/--sort rate/' /etc/xdg/reflector/reflector.conf
 
 # add user, assign to wheel, and allow any member of wheel group to execute sudo commands
-read -p "Enter desired username: " usn
 useradd -m "$usn"
-printf "Enter password for %s\n" "$usn"
-passwd "$usn"
+printf "$usn:$pass1" | chpasswd
 usermod -a -G wheel "$usn"
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-sed '1,/^# III. POSTINSTALLATION$/d' /1-base.sh > /home/"$usn"/2-post.sh
-rm /1-base.sh && rm /enc_dr_uuid
-chown "$usn":"$usn" /home/"$usn"/2-post.sh
-chmod +x /home/"$usn"/2-post.sh
-su -c /home/"$usn"/2-post.sh -s /bin/sh "$usn"
+# prompt if user wants to use my personal postinstall script
+printf "Would you like to use my personal postinstall script after restarting?(y/n): " && read -r ans
+case "$ans" in
+    y|Y) sed '1,/^##### POST INSTALLATION START #####$/d' /1-base.sh > /home/"$usn"/2-post.sh
+        shred -v /1-base.sh && rm /1-base.sh && shred -v /vars && rm /vars
+        chown "$usn":"$usn" /home/"$usn"/2-post.sh
+        chmod +x /home/"$usn"/2-post.sh
+        printf "You answered Yes. Script has been copied to /home/%s/2-post.sh\nRun \"./2-post.sh\" after rebooting." "$usn"
+        exit;;
+    *) printf "You answered No. You can reboot now and goodluck with the rest of your installation :)"
+        exit;;
+esac
+printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 
-# III. POSTINSTALLATION
+##### POST INSTALLATION START #####
 #!/bin/sh
 
 # enable ufw
-#sudo ufw enable
+sudo ufw enable
 
 # making directories
-cd ~
 mkdir -p ~/.local/src/DefinitelyNotMai 
 mkdir ~/.config
 mkdir -p ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers 
@@ -170,12 +210,10 @@ mkdir -p ~/documents ~/downloads ~/music ~/pictures/mpv-screenshots ~/pictures/s
 
 # make mount directories, mount flashdrive and copy files
 sudo mkdir /mnt/usb /mnt/hdd
-sudo chown $(whoami): /mnt/usb
+sudo chown "$(whoami)": /mnt/usb
 sudo chmod 750 /mnt/usb
-sudo chown $(whoami): /mnt/hdd
+sudo chown "$(whoami)": /mnt/hdd
 sudo chmod 750 /mnt/hdd
-# sudo mount /dev/sda1 /mnt/usb
-# sudo umount /mnt/usb
 
 # wget and set dracula-themed wallpaper
 wget https://github.com/aynp/dracula-wallpapers/raw/main/Art/Ghost.png -O ~/.local/share/wallpapers/ghost.png
@@ -209,14 +247,13 @@ ln -s ~/.config/shell/profile ~/.zprofile
 
 # install packages I use
 sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
-  ncmpcpp unclutter sxiv libreoffice-fresh dunst gimp lxappearance htop bc \
-  keepassxc pcmanfm zathura zathura-pdf-mupdf zathura-cb scrot obs-studio \
-  pulsemixer jdk-openjdk jre-openjdk jre-openjdk-headless xwallpaper p7zip \
-  unzip unrar rust go ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug zsh \
-  zsh-syntax-highlighting ffmpegthumbnailer highlight odt2txt file-roller \
-  catdoc docx2txt perl-image-exiftool python-pdftotext android-tools xclip \
-  noto-fonts-emoji noto-fonts-cjk firefox fzf alacritty \
-  libappindicator-gtk3 ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
+  ncmpcpp libreoffice-fresh dunst gimp lxappearance htop bc keepassxc pcmanfm \
+  zathura zathura-pdf-mupdf zathura-cb scrot obs-studio pulsemixer jdk-openjdk \
+  jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
+  zsh-syntax-highlighting ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug \
+  ffmpegthumbnailer highlight odt2txt file-roller catdoc docx2txt perl-image-exiftool \
+  python-pdftotext android-tools xclip noto-fonts-emoji noto-fonts-cjk firefox \
+  fzf alacritty ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
   npm ripgrep time tree neofetch openssh cmake
 
 # install AUR helper and AUR packages I use
