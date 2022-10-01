@@ -140,9 +140,9 @@ printf "127.0.0.1    localhost\n::1          localhost\n127.0.1.1    %s.localdom
 printf "root:$rpass1" | chpasswd
 
 # install some packages
-pacman -S --noconfirm grub efibootmgr networkmanager mtools dosfstools ntfs-3g \
-  ufw dash pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers \
-  reflector git wget neovim man-db polkit
+pacman -S --noconfirm grub efibootmgr networkmanager ntfs-3g ufw dash git wget \
+  pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers neovim man-db \
+  reflector polkit
 
 # open mkinitcpio.conf
 sed -i "s/HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
@@ -186,7 +186,7 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 printf "Would you like to use my personal postinstall script after restarting?(y/n): " && read -r ans
 case "$ans" in
     y|Y) sed '1,/^##### POST INSTALLATION START #####$/d' /1-base.sh > /home/"$usn"/2-post.sh
-        shred -v /1-base.sh && rm /1-base.sh && shred -v /vars && rm /vars
+        shred -v /1-base.sh /vars && rm /1-base.sh /vars
         chown "$usn":"$usn" /home/"$usn"/2-post.sh
         chmod +x /home/"$usn"/2-post.sh
         printf "You answered Yes. Script has been copied to /home/%s/2-post.sh\nRun \"./2-post.sh\" after rebooting.\n" "$usn"
@@ -252,7 +252,7 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
   zsh-syntax-highlighting ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug \
   ffmpegthumbnailer highlight odt2txt file-roller catdoc docx2txt perl-image-exiftool \
-  python-pdftotext android-tools xclip noto-fonts-emoji noto-fonts-cjk firefox \
+  python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox \
   fzf alacritty ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
   npm ripgrep time tree neofetch openssh cmake
 
@@ -287,6 +287,10 @@ cd ../st && sudo make install
 
 # change shell to zsh
 chsh -s /usr/bin/zsh
+
+# delete all .bash* files
+cd ~
+shred -v .bash* .wget-hsts 2-post.sh && rm .bash* .wget-hsts 2-post.sh
 
 # done
 clear
