@@ -17,8 +17,8 @@ while [ "$rpass1" != "$rpass2" ]; do
 done
 
 # prompt for user to enter desired username for personal user
-printf "Enter desired username: " && read -r usn
-while ! echo "%s" "$usn" | grep -q "^[a-z_][a-z0-9_-]*$"; do
+printf "\nEnter desired username: " && read -r usn
+while ! printf "%s" "$usn" | grep -q "^[a-z_][a-z0-9_-]*$"; do
     printf "Error! Invalid username. Try again: " && read -r usn
 done
 
@@ -32,11 +32,11 @@ while [ "$pass1" != "$pass2" ]; do
 done
 
 # print set values to "vars" file to be sourced as variables on base installation
-printf "hsn=%s\nrpass1=%s\nrpass2=%s\n" "$hsn" "$rpass1" >> /vars
-printf "usn=%s\npass1=%s\n" "$usn" "$pass1" >> /vars
+printf "hsn=%s\nrpass1=%s\n" "$hsn" "$rpass1" >> vars
+printf "usn=%s\npass1=%s\n" "$usn" "$pass1" >> vars
 
 # update mirrorlist
-printf "Updating mirrorlist with reflector. Please wait...\n"
+printf "\nUpdating mirrorlist with reflector. Please wait...\n"
 reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 20
 
 # enable and set ParallelDownloads to 15
@@ -90,14 +90,14 @@ genfstab -U /mnt >> /mnt/etc/fstab
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
 # add variable for cryp-root UUID
-printf "enc_dr_uuid=" >> /vars
-blkid -s UUID -o value "$rp" >> /vars
+printf "enc_dr_uuid=" >> vars
+blkid -s UUID -o value "$rp" >> vars
 
 # copy vars to source for variables to be used in Base Installation
-cp /vars /mnt/vars
+cp vars /mnt/vars
 
 # copy base install script to /mnt and make it executable
-sed "1,/^##### BASE INSTALLATION START#####$/d" 0-pre.sh > /mnt/1-base.sh
+sed "1,/^##### BASE INSTALLATION START #####$/d" 0-pre.sh > /mnt/1-base.sh
 chmod +x /mnt/1-base.sh
 
 # pre-installation done
@@ -111,7 +111,7 @@ exit
 #!/bin/sh
 
 # source vars for hostname, username, and kernel parameters
-. vars
+. /vars
 
 # enable and set ParallelDownloads to 15
 sed -i 's/^#ParallelDownloads = 5/ParallelDownloads = 15/' /etc/pacman.conf
@@ -189,9 +189,9 @@ case "$ans" in
         shred -v /1-base.sh && rm /1-base.sh && shred -v /vars && rm /vars
         chown "$usn":"$usn" /home/"$usn"/2-post.sh
         chmod +x /home/"$usn"/2-post.sh
-        printf "You answered Yes. Script has been copied to /home/%s/2-post.sh\nRun \"./2-post.sh\" after rebooting." "$usn"
+        printf "You answered Yes. Script has been copied to /home/%s/2-post.sh\nRun \"./2-post.sh\" after rebooting.\n" "$usn"
         exit;;
-    *) printf "You answered No. You can reboot now and goodluck with the rest of your installation :)"
+    *) printf "You answered No. You can reboot now and goodluck with the rest of your installation :)\n"
         exit;;
 esac
 printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
@@ -290,4 +290,4 @@ chsh -s /usr/bin/zsh
 
 # done
 clear
-printf "Post installation done! Run \"systemctl reboot\" and login. :)"
+printf "Post installation done! Run \"systemctl reboot\" and login. :)\n"
