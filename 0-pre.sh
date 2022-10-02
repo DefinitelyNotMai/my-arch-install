@@ -208,6 +208,14 @@ mkdir -p ~/.config ~/.local ~/.local/share/cargo ~/.local/share/go \
     ~/.local/share/wallpapers ~/documents ~/downloads ~/music \
     ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos
 
+# exports
+export CARGO_HOME="$HOME/.local/share/cargo"
+export GOPATH="$HOME/.local/share/go"
+export LESSHISTFILE="-"
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+alias yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
+printf "prefix=${XDG_DATA_HOME}/npm\ncache=${XDG_CACHE_HOME}/npm\ntmp=${XDG_RUNTIME_DIR}/npm\ninit-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js\n" | sudo tee -a /usr/etc/npmrc
+
 # make mount directories. I personally separate mount dirs for my flashdrive and hdd
 sudo mkdir /mnt/usb /mnt/hdd
 sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
@@ -216,11 +224,6 @@ sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
 # wget and set dracula-themed wallpaper
 wget https://github.com/aynp/dracula-wallpapers/raw/main/Art/Ghost.png -O ~/.local/share/wallpapers/ghost.png
 ln -s ~/.local/share/wallpapers/ghost.png ~/.local/share/bg
-
-# exports
-export CARGO_HOME="$HOME/.local/share/cargo"
-export GOPATH="$HOME/.local/share/go"
-export LESSHISTFILE="-"
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
