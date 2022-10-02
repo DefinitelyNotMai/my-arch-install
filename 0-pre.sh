@@ -284,7 +284,7 @@ git clone https://github.com/DefinitelyNotMai/st
 cd dmenu && sudo make install
 cd ../dwm && sudo make install
 cd ../scroll && sudo make install
-cd ../slock && sudo make install
+cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make install
 cd ../slstatus && sudo make install
 cd ../st && sudo make install
 
