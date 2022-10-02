@@ -243,6 +243,14 @@ ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zsh ~/.config/zsh
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin ~/.local/bin
 ln -s ~/.config/shell/profile ~/.zprofile
 
+# rename a directory and readjust some config files to line up with username 
+sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0/gtkrc
+sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0/bookmarks
+sed -i "s/user/$(whoami)/g" ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim/init.lua
+mv ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim/lua/user ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim/lua/$(whoami) 
+sed -i "s/user/$(whoami)/g" ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim/lua/$(whoami)/lsp/init.lua
+sed -i "s/user/$(whoami)/g" ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim/lua/$(whoami)/lsp/lsp-installer.lua
+
 # install packages I use
 sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   ncmpcpp libreoffice-fresh dunst gimp lxappearance htop bc keepassxc pcmanfm \
