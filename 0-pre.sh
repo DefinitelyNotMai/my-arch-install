@@ -258,9 +258,9 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
   zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono highlight xclip \
   ffmpegthumbnailer odt2txt catdoc docx2txt perl-image-exiftool android-tools \
-  python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox \
-  fzf alacritty pavucontrol newsboat brightnessctl wmname ueberzug npm ripgrep \
-  time tree neofetch openssh cmake 
+  python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox cmake \
+  fzf alacritty newsboat wmname ueberzug npm ripgrep time tree neofetch \
+  openssh ttc-iosevka-slab
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
@@ -277,7 +277,6 @@ paru dracula-cursors-git
 paru dracula-gtk-theme-git
 paru lf-git
 paru otpclient
-paru ttf-comic-mono-git
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
