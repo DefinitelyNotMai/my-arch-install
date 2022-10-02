@@ -212,9 +212,6 @@ mkdir -p ~/.config ~/.local ~/.local/share/cargo ~/.local/share/go \
 export CARGO_HOME="$HOME/.local/share/cargo"
 export GOPATH="$HOME/.local/share/go"
 export LESSHISTFILE="-"
-alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
-alias yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
-printf "prefix=${XDG_DATA_HOME}/npm\ncache=${XDG_CACHE_HOME}/npm\ntmp=${XDG_RUNTIME_DIR}/npm\ninit-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js\n" | sudo tee -a /usr/etc/npmrc
 
 # make mount directories. I personally separate mount dirs for my flashdrive and hdd
 sudo mkdir /mnt/usb /mnt/hdd
@@ -274,7 +271,7 @@ git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
 cd ~/.local/src/paru || exit
 makepkg -si
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
-paru freetube-bin
+paru freetube-git
 paru dracula-icons-git
 paru dracula-cursors-git
 paru dracula-gtk-theme-git
@@ -304,7 +301,7 @@ chsh -s /usr/bin/zsh
 
 # delete all .bash* files
 cd ~
-shred -v .bash* .wget-hsts 2-post.sh && rm .bash* .wget-hsts 2-post.sh
+shred -v .wget-hsts 2-post.sh && rm .wget-hsts 2-post.sh
 
 # done
 clear
