@@ -60,7 +60,7 @@ sgdisk -n 2::-0 --typecode=2:8300 "$dr"
 clear
 lsblk
 case "$dr" in
-    "nvme") bp="$dr"p1 && rp="$dr"p2 ;;
+    *nvme*) bp="$dr"p1 && rp="$dr"p2 ;;
     *) bp="$dr"1 && rp="$dr"2 ;;
 esac
 mkfs.vfat -F32 "$bp"
@@ -83,7 +83,8 @@ esac
 # install essential packages
 pacstrap /mnt base base-devel linux linux-firmware "$microcode"
 
-# generate fstab file
+# run partprobe to reread partition table, and generate fstab file
+partprobe "$dr"
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # copy current mirrorlist to mounted root
@@ -255,6 +256,10 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox \
   fzf alacritty ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
   npm ripgrep time tree neofetch openssh cmake
+
+# install packer.nvim, a plugin manager for neovim written in Lua
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 
 # install AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
