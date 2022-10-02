@@ -6,6 +6,7 @@ Mainly for me but others are free to use this script.
 
 ## HEADS UP!
 This script:
+- will wipe your selected drive and will only have Arch Linux on it. Dualbooting is not supported in this script.
 - only makes 2 partitions: root and boot.
 - uses ext4 only, no btrfs or other filesystems.
 - encryption type used is LUKS on partition.
