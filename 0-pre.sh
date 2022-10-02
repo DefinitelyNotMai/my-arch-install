@@ -204,17 +204,14 @@ printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 sudo ufw enable
 
 # making directories
-mkdir -p ~/.local/src/DefinitelyNotMai 
-mkdir ~/.config
-mkdir -p ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers 
-mkdir -p ~/documents ~/downloads ~/music ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos
+mkdir -p ~/.config ~/.local ~/.local/share/cargo ~/.local/share/go \
+    ~/.local/share/wallpapers ~/documents ~/downloads ~/music \
+    ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos
 
-# make mount directories, mount flashdrive and copy files
+# make mount directories. I personally separate mount dirs for my flashdrive and hdd
 sudo mkdir /mnt/usb /mnt/hdd
-sudo chown "$(whoami)": /mnt/usb
-sudo chmod 750 /mnt/usb
-sudo chown "$(whoami)": /mnt/hdd
-sudo chmod 750 /mnt/hdd
+sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
+sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
 
 # wget and set dracula-themed wallpaper
 wget https://github.com/aynp/dracula-wallpapers/raw/main/Art/Ghost.png -O ~/.local/share/wallpapers/ghost.png
@@ -251,11 +248,11 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   ncmpcpp libreoffice-fresh dunst gimp lxappearance htop bc keepassxc pcmanfm \
   zathura zathura-pdf-mupdf zathura-cb scrot obs-studio pulsemixer jdk-openjdk \
   jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
-  zsh-syntax-highlighting ttf-liberation ttf-nerd-fonts-symbols-2048-em-mono ueberzug \
-  ffmpegthumbnailer highlight odt2txt file-roller catdoc docx2txt perl-image-exiftool \
+  zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono highlight xclip \
+  ffmpegthumbnailer odt2txt catdoc docx2txt perl-image-exiftool android-tools \
   python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox \
-  fzf alacritty ttf-jetbrains-mono pavucontrol newsboat brightnessctl wmname \
-  npm ripgrep time tree neofetch openssh cmake
+  fzf alacritty pavucontrol newsboat brightnessctl wmname ueberzug npm ripgrep \
+  time tree neofetch openssh cmake 
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
@@ -272,6 +269,7 @@ paru dracula-cursors-git
 paru dracula-gtk-theme-git
 paru lf-git
 paru otpclient
+paru ttf-comic-mono-git
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
