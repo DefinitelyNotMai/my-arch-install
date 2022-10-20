@@ -142,8 +142,8 @@ printf "root:$rpass1" | chpasswd
 
 # install some packages
 pacman -S --noconfirm grub efibootmgr networkmanager ntfs-3g ufw dash git wget \
-  pipewire pipewire-alsa pipewire-pulse pipewire-jack linux-headers neovim man-db \
-  reflector polkit
+  pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers \
+  neovim man-db reflector polkit
 
 # open mkinitcpio.conf
 sed -i "s/HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
@@ -271,10 +271,11 @@ git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
 cd ~/.local/src/paru || exit
 makepkg -si
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
-paru freetube-git
+paru freetube-bin
 paru dracula-icons-git
 paru dracula-cursors-git
 paru dracula-gtk-theme-git
+paru nsxiv-git
 paru lf-git
 paru otpclient
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
