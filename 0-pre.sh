@@ -233,6 +233,7 @@ ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpd ~/.config/mpd
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpv ~/.config/mpv
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/ncmpcpp ~/.config/ncmpcpp
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/newsboat ~/.config/newsboat
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/npm ~/.config/npm
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim ~/.config/nvim
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/pcmanfm ~/.config/pcmanfm
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/shell ~/.config/shell
@@ -256,7 +257,8 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   ffmpegthumbnailer odt2txt catdoc docx2txt perl-image-exiftool android-tools \
   python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox cmake \
   fzf alacritty newsboat wmname ueberzug npm ripgrep time tree neofetch \
-  openssh ttc-iosevka-slab
+  openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
+  autopep8
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
@@ -274,6 +276,7 @@ paru dracula-gtk-theme-git
 paru nsxiv-git
 paru lf-git
 paru otpclient
+paru stylua
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
@@ -298,6 +301,9 @@ chsh -s /usr/bin/zsh
 # delete all .bash* files
 cd ~
 shred -v .wget-hsts 2-post.sh && rm .wget-hsts 2-post.sh
+
+# echo out an npm installation script for neovim config to be ran after restart
+printf "#!/bin/sh\n\nnpm i -g typescript typescript-language-server vscode-langservers-extracted vls @tailwindcss/language-server yaml-language-server @prisma/language-server emmet-ls neovim graphql-language-service-cli @astrojs/language-server prettier"
 
 # done
 clear
