@@ -206,7 +206,7 @@ sudo ufw enable
 # making directories
 mkdir -p ~/.config ~/.local ~/.local/share/cargo ~/.local/share/go \
     ~/.local/share/wallpapers ~/documents ~/downloads ~/music \
-    ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos
+    ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos ~/projects
 
 # exports
 export CARGO_HOME="$HOME/.local/share/cargo"
