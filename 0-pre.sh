@@ -299,10 +299,6 @@ cd ../st && sudo make install
 # change shell to zsh
 chsh -s /usr/bin/zsh
 
-# delete all .bash* files
-cd ~
-shred -v .wget-hsts 2-post.sh && rm .wget-hsts 2-post.sh
-
 # echo out an npm installation script for neovim config to be ran after restart
 printf "#!/bin/sh\n\nnpm i -g typescript typescript-language-server vscode-langservers-extracted vls @tailwindcss/language-server yaml-language-server @prisma/language-server emmet-ls neovim graphql-language-service-cli @astrojs/language-server prettier" > ~/final.sh && chmod +x final.sh
 
