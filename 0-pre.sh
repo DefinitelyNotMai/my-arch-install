@@ -258,7 +258,8 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox cmake \
   fzf alacritty newsboat wmname ueberzug npm ripgrep time tree neofetch \
   openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
-  autopep8
+  autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
+  dmidecode libxpresent spice-protocol dkms qemu-audio-jack
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
