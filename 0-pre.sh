@@ -160,8 +160,8 @@ printf "[Trigger]\nType = Package\nOperation = Install\nOperation = Upgrade\nTar
 # install systemd-boot
 bootctl install
 printf "default arch.conf\ntimeout 3\n" > /boot/loader/loader.conf
-printf "title Arch Linux\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux.img\ncryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid"> /boot/loader/entries/arch.conf
-printf "title Arch Linux (fallback initramfs)\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux-fallback.img\ncryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid"> /boot/loader/entries/arch-fallback.conf
+printf "title Arch Linux\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux.img\noptions cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid" > /boot/loader/entries/arch.conf
+printf "title Arch Linux (fallback initramfs)\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux-fallback.img\noptions cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid" > /boot/loader/entries/arch-fallback.conf
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough
 #lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
@@ -249,7 +249,7 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0/bookmarks
 
 # install packages I use
-sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
+sudo pacman -S xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   ncmpcpp libreoffice-fresh dunst gimp lxappearance htop bc keepassxc pcmanfm \
   zathura zathura-pdf-mupdf zathura-cb scrot obs-studio pulsemixer jdk-openjdk \
   jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
@@ -259,7 +259,8 @@ sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   fzf alacritty newsboat wmname ueberzug npm ripgrep time tree neofetch \
   openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
   autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
-  dmidecode libxpresent spice-protocol dkms qemu-audio-jack
+  dmidecode libxpresent spice-protocol dkms qemu-audio-jack ncdu \
+  power-profiles-daemon asciiquarium
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
