@@ -79,6 +79,7 @@ case "$cpu" in
     *AuthenticAMD) microcode=amd-ucode ;;
     *GenuineIntel) microcode=intel-ucode ;;
 esac
+printf "microcode=%s" "$microcode" >> vars
 
 # install essential packages
 pacstrap /mnt base base-devel linux linux-firmware "$microcode"
@@ -141,7 +142,7 @@ printf "127.0.0.1    localhost\n::1          localhost\n127.0.1.1    %s.localdom
 printf "root:$rpass1" | chpasswd
 
 # install some packages
-pacman -S --noconfirm grub efibootmgr networkmanager ntfs-3g ufw dash git wget \
+pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget \
   pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers \
   neovim man-db reflector polkit
 
@@ -156,16 +157,15 @@ mkinitcpio -p linux
 ln -sfT dash /usr/bin/sh
 printf "[Trigger]\nType = Package\nOperation = Install\nOperation = Upgrade\nTarget = bash\n\n[Action]\nDescription = Re-pointing /bin/sh symlink to dash...\nWhen = PostTransaction\nExec = /usr/bin/ln -sfT dash /usr/bin/sh\nDepends = dash\n" > /usr/share/libalpm/hooks/binsh2dash.hook
 
-# remove grub timeout and install grub
-sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=-1/' /etc/default/grub
-sed -i "s%GRUB_CMDLINE_LINUX=\"%GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$enc_dr_uuid:crypt-root root=/dev/mapper/crypt-root%g" /etc/default/grub
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-grub-mkconfig -o /boot/grub/grub.cfg
+# install systemd-boot
+bootctl install
+printf "default arch.conf\ntimeout 3\n" > /boot/loader/loader.conf
+printf "title Arch Linux\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux.img\ncryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid"> /boot/loader/entries/arch.conf
+printf "title Arch Linux (fallback initramfs)\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux-fallback.img\ncryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid"> /boot/loader/entries/arch-fallback.conf
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough
 #lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
-#nvim /etc/default/grub
-#grub-mkconfig -o /boot/grub/grub.cfg
+#nvim /boot/loader/entries/arch.conf
 
 # enable services
 systemctl enable NetworkManager
@@ -295,6 +295,13 @@ cd ../scroll && sudo make install
 cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make install
 cd ../slstatus && sudo make install
 cd ../st && sudo make install
+
+# enable services
+sudo systemctl enable power-profiles-daemon
+sudo systemctl enable libvirtd
+
+# add user to groups
+sudo usermod -aG libvirt,kvm $(whoami)
 
 # change shell to zsh
 chsh -s /usr/bin/zsh
