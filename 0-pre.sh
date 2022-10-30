@@ -204,9 +204,9 @@ printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 sudo ufw enable
 
 # making directories
-mkdir -p ~/.config ~/.local ~/.local/share/cargo ~/.local/share/go \
-    ~/.local/share/wallpapers ~/documents ~/downloads ~/music \
-    ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos ~/projects
+mkdir -p ~/.config ~/.local/share/{cargo,go,wallpapers} \
+    ~/{documents,downloads,music,pictures,projects,videos} \
+    ~/pictures/{mpv-screenshots,scrot-screenshots}
 
 # exports
 export CARGO_HOME="$HOME/.local/share/cargo"
@@ -214,9 +214,8 @@ export GOPATH="$HOME/.local/share/go"
 export LESSHISTFILE="-"
 
 # make mount directories. I personally separate mount dirs for my flashdrive and hdd
-sudo mkdir /mnt/usb /mnt/hdd
-sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
-sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
+sudo mkdir /mnt/{hdd,usb}
+sudo chown "$(whoami)": /mnt/{hdd,usb} && sudo chmod 750 /mnt/{hdd,usb}
 
 # wget and set dracula-themed wallpaper
 wget https://github.com/aynp/dracula-wallpapers/raw/main/Art/Ghost.png -O ~/.local/share/wallpapers/ghost.png
@@ -296,6 +295,13 @@ cd ../scroll && sudo make install
 cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make install
 cd ../slstatus && sudo make install
 cd ../st && sudo make install
+
+# enable services
+sudo systemctl enable power-profiles-daemon
+sudo systemctl enable libvirtd
+
+# add to groups
+sudo usermod -aG libvirt,kvm $(whoami)
 
 # change shell to zsh
 chsh -s /usr/bin/zsh
