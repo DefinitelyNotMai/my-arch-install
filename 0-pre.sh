@@ -249,7 +249,7 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0/bookmarks
 
 # install packages I use
-sudo pacman -S xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
+sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   ncmpcpp libreoffice-fresh dunst gimp lxappearance htop bc keepassxc pcmanfm \
   zathura zathura-pdf-mupdf zathura-cb scrot obs-studio pulsemixer jdk-openjdk \
   jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
@@ -259,8 +259,7 @@ sudo pacman -S xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
   fzf alacritty newsboat wmname ueberzug npm ripgrep time tree neofetch \
   openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
   autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
-  dmidecode libxpresent spice-protocol dkms qemu-audio-jack ncdu \
-  power-profiles-daemon
+  dmidecode libxpresent spice-protocol dkms qemu-audio-jack
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
