@@ -1,6 +1,7 @@
 # my-arch-install
 Shell script I made to automate my Arch Linux install.  
-
+a  
+b
 ## Who should use this?
 Mainly for me but others are free to use this script.
 
