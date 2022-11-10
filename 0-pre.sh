@@ -1,39 +1,53 @@
 #!/bin/bash
 
 ##### PRE INSTALLATION START #####
-# prompt for user to enter desired hostname
-printf "Enter desired hostname: " && read -r hsn
+# get hostname
+printf "Enter desired hostname: "
+read -r hsn
 while ! printf "%s" "$hsn" | grep -q "^[a-z][a-z0-9-]*$"; do
-    printf "Error! Invalid hostname. Try again: " && read -r hsn
+    printf "ERROR: Invalid hostname. Try again: "
+    read -r hsn
 done
 
-# prompt for user to enter desired password for root
-printf "Enter password for root: " && read -rs rpass1
-printf "\nRe-enter password: " && read -rs rpass2
+# get root password
+printf "Enter password for root: "
+read -rs rpass1
+printf "\nRe-enter password: "
+read -rs rpass2
 while [ "$rpass1" != "$rpass2" ]; do
     unset rpass2
-    printf "\nError! Passwords don't match. Try again: " && read -rs rpass1
-    printf "\nRe-enter password: " && read -rs rpass2
+    printf "\nERROR: Passwords don't match. Try again: "
+    read -rs rpass1
+    printf "\nRe-enter password: "
+    read -rs rpass2
 done
 
-# prompt for user to enter desired username for personal user
-printf "\nEnter desired username: " && read -r usn
+# get username
+printf "\nEnter desired username: "
+read -r usn
 while ! printf "%s" "$usn" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-    printf "Error! Invalid username. Try again: " && read -r usn
+    printf "ERROR: Invalid username. Try again: "
+    read -r usn
 done
 
-# prompt for user to enter desired password for personal user
-printf "Enter password for %s: " "$usn" && read -rs pass1
-printf "\nRe-enter password: " && read -rs pass2
+# get user password
+printf "Enter password for %s: " "$usn"
+read -rs pass1
+printf "\nRe-enter password: "
+read -rs pass2
 while [ "$pass1" != "$pass2" ]; do
     unset pass2
-    printf "\nError! Passwords don't match. Try again: " && read -rs pass1
-    printf "\nRe-enter password: " && read -rs pass2
+    printf "\nERROR: Passwords don't match. Try again: "
+    read -rs pass1
+    printf "\nRe-enter password: "
+    read -rs pass2
 done
 
-# print set values to "vars" file to be sourced as variables on base installation
-printf "hsn=%s\nrpass1=%s\n" "$hsn" "$rpass1" >> vars
-printf "usn=%s\npass1=%s\n" "$usn" "$pass1" >> vars
+# get drive to format
+clear
+lsblk
+printf "Enter drive to format (Ex. \"/dev/sda\" OR \"/dev/nvme0n1\"): "
+read -r dr
 
 # update mirrorlist
 printf "\nUpdating mirrorlist with reflector. Please wait...\n"
@@ -46,9 +60,6 @@ sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 pacman -Sy --noconfirm archlinux-keyring
 
 # format disk
-clear
-lsblk
-printf "Enter drive to format(Ex. \"/dev/sda\" OR \"/dev/nvme0n1\"): " && read -r dr
 sgdisk -Z "$dr"
 sgdisk -a 2048 -o "$dr"
 
@@ -56,30 +67,31 @@ sgdisk -a 2048 -o "$dr"
 sgdisk -n 1::+300M --typecode=1:ef00 "$dr"
 sgdisk -n 2::-0 --typecode=2:8300 "$dr"
 
-# create filesystems
+# determine if drive is nvme or not
 clear
 lsblk
 case "$dr" in
     *nvme*) bp="$dr"p1 && rp="$dr"p2 ;;
     *) bp="$dr"1 && rp="$dr"2 ;;
 esac
-mkfs.vfat -F32 "$bp"
 
-# encrypt root partition and mount both partitions
+# encrypt and format root partition, and format boot partition
 cryptsetup -y -v luksFormat "$rp"
 cryptsetup open "$rp" crypt-root
 mkfs.ext4 /dev/mapper/crypt-root
+mkfs.vfat -F32 "$bp"
+
+# mount root and boot partition
 mount /dev/mapper/crypt-root /mnt
 mkdir /mnt/boot
 mount "$bp" /mnt/boot
 
-# check if processor is AMD or Intel
+# determine if processor is AMD or Intel for microcode package
 cpu=$(grep vendor_id /proc/cpuinfo)
 case "$cpu" in
     *AuthenticAMD) microcode=amd-ucode ;;
     *GenuineIntel) microcode=intel-ucode ;;
 esac
-printf "microcode=%s" "$microcode" >> vars
 
 # install essential packages
 pacstrap /mnt base base-devel linux linux-firmware "$microcode"
@@ -91,9 +103,16 @@ genfstab -U /mnt >> /mnt/etc/fstab
 # copy current mirrorlist to mounted root
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
-# add variable for cryp-root UUID
-printf "enc_dr_uuid=" >> vars
-blkid -s UUID -o value "$rp" >> vars
+# add variables
+{
+    printf "hsn=%s\n" "$hsn"
+    printf "rpass1=%s\n" "$rpass1"
+    printf "usn=%s\n" "$usn"
+    printf "pass1=%s\n" "$pass1"
+    printf "microcode=%s\n" "$microcode"
+    printf "enc_dr_uuid="
+    blkid -s UUID -o value "$rp"
+} > vars
 
 # copy vars to source for variables to be used in Base Installation
 cp vars /mnt/vars
@@ -138,13 +157,17 @@ sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 printf "LANG=en_US.UTF-8\n" >> /etc/locale.conf
 printf "%s\n" "$hsn" >> /etc/hostname
-printf "127.0.0.1    localhost\n::1          localhost\n127.0.1.1    %s.localdomain    %s\n" "$hsn" "$hsn" >> /etc/hosts
+{
+    printf "127.0.0.1    localhost\n"
+    printf "::1          localhost\n"
+    printf "127.0.1.1    %s.localdomain    %s\n" "$hsn" "$hsn"
+} >> /etc/hosts
 printf "root:$rpass1" | chpasswd
 
 # install some packages
-pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget \
-  pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers \
-  neovim man-db reflector polkit
+pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget man-db pipewire \
+    pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers neovim \
+    reflector polkit
 
 # open mkinitcpio.conf
 sed -i "s/HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
@@ -155,13 +178,39 @@ mkinitcpio -p linux
 
 # relink dash to /bin/sh and create hook to relink dash to /bin/sh everytime bash gets updated
 ln -sfT dash /usr/bin/sh
-printf "[Trigger]\nType = Package\nOperation = Install\nOperation = Upgrade\nTarget = bash\n\n[Action]\nDescription = Re-pointing /bin/sh symlink to dash...\nWhen = PostTransaction\nExec = /usr/bin/ln -sfT dash /usr/bin/sh\nDepends = dash\n" > /usr/share/libalpm/hooks/binsh2dash.hook
+{
+    printf "[Trigger]\n"
+    printf "Type = Package\n"
+    printf "Operation = Install\n"
+    printf "Operation = Upgrade\n"
+    printf "Target = bash\n\n"
+    printf "[Action]\n"
+    printf "Description = Re-pointing /bin/sh symlink to dash...\n"
+    printf "When = PostTransaction\n"
+    printf "Exec = /usr/bin/ln -sfT dash /usr/bin/sh\n"
+    printf "Depends = dash\n"
+} > /usr/share/libalpm/hooks/binsh2dash.hook
 
-# install systemd-boot
+# install and configure systemd-boot
 bootctl install
-printf "default arch.conf\ntimeout 3\n" > /boot/loader/loader.conf
-printf "title Arch Linux\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux.img\ncryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid"> /boot/loader/entries/arch.conf
-printf "title Arch Linux (fallback initramfs)\nlinux /vmlinuz-linux\ninitrd /%s.img\ninitrd /initramfs-linux-fallback.img\ncryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$microcode" "$enc_dr_uuid"> /boot/loader/entries/arch-fallback.conf
+{
+    printf "default arch.conf\n"
+    printf "timeout 3\n"
+} > /boot/loader/loader.conf
+{
+    printf "title Arch Linux\n"
+    printf "linux /vmlinuz-linux\n"
+    printf "initrd /%s.img\n" "$microcode"
+    printf "initrd /initramfs-linux.img\n"
+    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$enc_dr_uuid"
+} > /boot/loader/entries/arch.conf
+{
+    printf "title Arch Linux (fallback initramfs)\n"
+    printf "linux /vmlinuz-linux\n"
+    printf "initrd /%s.img\n" "$microcode"
+    printf "initrd /initramfs-linux-fallback.img\n"
+    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$enc_dr_uuid"
+} > /boot/loader/entries/arch-fallback.conf
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough
 #lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
@@ -178,13 +227,13 @@ sed -i 's/--latest 5/--latest 10/' /etc/xdg/reflector/reflector.conf
 sed -i 's/--sort age/--sort rate/' /etc/xdg/reflector/reflector.conf
 
 # add user, assign to wheel, and allow any member of wheel group to execute sudo commands
-useradd -m "$usn"
+useradd -mG wheel "$usn"
 printf "$usn:$pass1" | chpasswd
-usermod -a -G wheel "$usn"
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 # prompt if user wants to use my personal postinstall script
-printf "Would you like to use my personal postinstall script after restarting?(y/n): " && read -r ans
+printf "Would you like to use my personal postinstall script after restarting?(y/n): "
+read -r ans
 case "$ans" in
     y|Y) sed '1,/^##### POST INSTALLATION START #####$/d' /1-base.sh > /home/"$usn"/2-post.sh
         shred -v /1-base.sh /vars && rm /1-base.sh /vars
@@ -249,17 +298,17 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0/bookmarks
 
 # install packages I use
-sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xev libnotify mpd mpv \
-  ncmpcpp libreoffice-fresh dunst gimp lxappearance htop bc keepassxc pcmanfm \
-  zathura zathura-pdf-mupdf zathura-cb scrot obs-studio pulsemixer jdk-openjdk \
-  jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go zsh \
-  zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono highlight xclip \
-  ffmpegthumbnailer odt2txt catdoc docx2txt perl-image-exiftool android-tools \
-  python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox cmake \
-  fzf alacritty newsboat wmname ueberzug npm ripgrep time tree neofetch \
-  openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
-  autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
-  dmidecode libxpresent spice-protocol dkms qemu-audio-jack
+sudo pacman -S xorg-server xorg-xinit xorg-xev libnotify mpd mpv ncmpcpp htop \
+    libreoffice-fresh dunst gimp lxappearance bc keepassxc pcmanfm scrot time \
+    zathura zathura-pdf-mupdf zathura-cb obs-studio pulsemixer jdk-openjdk zsh \
+    jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go fzf \
+    zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono highlight xclip \
+    ffmpegthumbnailer odt2txt catdoc docx2txt perl-image-exiftool android-tools \
+    python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox cmake \
+    alacritty newsboat wmname ueberzug npm ripgrep tree neofetch openssh \
+    ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
+    autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
+    dmidecode libxpresent spice-protocol dkms qemu-audio-jack asciiquarium \
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
