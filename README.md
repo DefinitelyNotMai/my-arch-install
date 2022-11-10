@@ -14,7 +14,7 @@ This script:
 - makes an 8GB swapfile.
 - makes "dash" your "/bin/sh".
 - uses PipeWire as audio.
-- uses GRUB as the bootloader.
+- uses systemd-boot as the bootloader.
 
 ## Installation
 After Live ISO loads up, run the following commands:
