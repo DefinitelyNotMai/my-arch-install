@@ -333,18 +333,18 @@ sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
 # install my suckless tools
 cd ~/.local/src/DefinitelyNotMai/ || exit
-git clone https://github.com/DefinitelyNotMai/dmenu
-git clone https://github.com/DefinitelyNotMai/dwm
-git clone https://github.com/DefinitelyNotMai/scroll
-git clone https://github.com/DefinitelyNotMai/slock
-git clone https://github.com/DefinitelyNotMai/slstatus
-git clone https://github.com/DefinitelyNotMai/st
-cd dmenu && sudo make install
-cd ../dwm && sudo make install
-cd ../scroll && sudo make install
-cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make install
-cd ../slstatus && sudo make install
-cd ../st && sudo make install
+git clone https://github.com/DefinitelyNotMai/dmenu.git
+git clone https://github.com/DefinitelyNotMai/dwm.git
+git clone https://github.com/DefinitelyNotMai/scroll.git
+git clone https://github.com/DefinitelyNotMai/slock.git
+git clone https://github.com/DefinitelyNotMai/slstatus.git
+git clone https://github.com/DefinitelyNotMai/st.git
+cd dmenu && sudo make clean install
+cd ../dwm && sudo make clean install
+cd ../scroll && sudo make clean install
+cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make clean install
+cd ../slstatus && sudo make clean install
+cd ../st && sudo make clean install
 
 # enable services
 sudo systemctl enable power-profiles-daemon
