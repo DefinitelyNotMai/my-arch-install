@@ -286,6 +286,7 @@ ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/npm ~/.config/npm
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim ~/.config/nvim
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/pcmanfm ~/.config/pcmanfm
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/shell ~/.config/shell
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/sxhkd ~/.config/sxhkd
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/x11 ~/.config/x11
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/user-dirs.dirs ~/.config/user-dirs.dirs
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zathura ~/.config/zathura
