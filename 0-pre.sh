@@ -326,6 +326,7 @@ paru freetube-bin
 paru ungoogled-chromium-bin
 paru nsxiv-git
 paru lf-git
+paru catppuccin-gtk-theme-mocha
 paru otpclient
 paru stylua
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
