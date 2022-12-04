@@ -323,6 +323,7 @@ makepkg -si
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
 paru brave-bin
 paru freetube-bin
+paru ungoogled-chromium-bin
 paru nsxiv-git
 paru lf-git
 paru otpclient
