@@ -202,14 +202,14 @@ bootctl install
     printf "linux /vmlinuz-linux\n"
     printf "initrd /%s.img\n" "$microcode"
     printf "initrd /initramfs-linux.img\n"
-    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$enc_dr_uuid"
+    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root rw\n" "$enc_dr_uuid"
 } > /boot/loader/entries/arch.conf
 {
     printf "title Arch Linux (fallback initramfs)\n"
     printf "linux /vmlinuz-linux\n"
     printf "initrd /%s.img\n" "$microcode"
     printf "initrd /initramfs-linux-fallback.img\n"
-    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root\n" "$enc_dr_uuid"
+    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root rw\n" "$enc_dr_uuid"
 } > /boot/loader/entries/arch-fallback.conf
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough
