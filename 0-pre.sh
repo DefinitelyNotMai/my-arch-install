@@ -268,8 +268,8 @@ sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
 sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
 
 # wget and set dracula-themed wallpaper
-wget https://github.com/aynp/dracula-wallpapers/raw/main/Art/Ghost.png -O ~/.local/share/wallpapers/ghost.png
-ln -s ~/.local/share/wallpapers/ghost.png ~/.local/share/bg
+wget https://raw.githubusercontent.com/catppuccin/wallpapers/main/flatppuccin/flatppuccin_4k_macchiato.png -O ~/.local/share/wallpapers/flatppuccin.png
+ln -s ~/.local/share/wallpapers/flatppuccin.png ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
