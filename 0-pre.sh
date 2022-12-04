@@ -291,6 +291,7 @@ ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/x11 ~/.config/x11
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/user-dirs.dirs ~/.config/user-dirs.dirs
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zathura ~/.config/zathura
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zsh ~/.config/zsh
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/wgetrc ~/.config/wgetrc
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin ~/.local/bin
 ln -s ~/.config/shell/profile ~/.zprofile
 
