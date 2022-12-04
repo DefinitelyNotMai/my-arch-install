@@ -323,8 +323,6 @@ makepkg -si
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
 paru brave-bin
 paru freetube-bin
-paru dracula-icons-git
-paru dracula-gtk-theme-git
 paru nsxiv-git
 paru lf-git
 paru otpclient
