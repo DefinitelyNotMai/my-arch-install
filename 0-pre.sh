@@ -310,7 +310,7 @@ sudo pacman -S xorg-server xorg-xinit xorg-xev libnotify mpd mpv ncmpcpp htop \
     ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
     autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
     dmidecode libxpresent spice-protocol dkms qemu-audio-jack asciiquarium \
-    power-profiles-daemon yt-dlp sxhkd 
+    power-profiles-daemon yt-dlp sxhkd papirus-icon-theme
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
