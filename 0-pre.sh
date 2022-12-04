@@ -317,8 +317,8 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 
 # install AUR helper and AUR packages I use
-git clone https://aur.archlinux.org/paru.git ~/.local/src/paru
-cd ~/.local/src/paru || exit
+git clone https://aur.archlinux.org/paru-git ~/.local/src/paru-git
+cd ~/.local/src/paru-git || exit
 makepkg -si
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
 paru brave-bin
