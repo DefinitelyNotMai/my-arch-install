@@ -169,8 +169,8 @@ pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget man-db pipewire \
     pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers neovim \
     reflector polkit
 
-# open mkinitcpio.conf
-sed -i "s/HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
+# add some stuff mkinitcpio.conf hooks
+sed -i "s/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
 
 # uncomment if you want to load modules for hijacking graphics card. For GPU Passthrough
 #sed -i "s/MODULES=()/MODULES=(vfio_pci vfio vfio_iommu_type1 vfio_virqfd)/" /etc/mkinitcpio.conf
