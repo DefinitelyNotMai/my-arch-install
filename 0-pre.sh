@@ -253,7 +253,7 @@ printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 sudo ufw enable
 
 # making directories
-mkdir -p ~/.config ~/.local ~/.local/share/cargo ~/.local/share/go \
+mkdir -p ~/.config ~/.local ~/.local/bin ~/.local/share/cargo ~/.local/share/go \
     ~/.local/share/wallpapers ~/documents ~/downloads ~/music \
     ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos ~/projects
 
