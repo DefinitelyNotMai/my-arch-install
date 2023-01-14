@@ -364,4 +364,4 @@ printf "#!/bin/sh\n\nnpm i -g typescript typescript-language-server vscode-langs
 
 # done
 clear
-printf "Post installation done! Run \"systemctl reboot\" and after logging in, run \"./final.sh\". :)\n"
+printf "Post installation done! Run \"systemctl reboot\" and after logging in, open a terminal and run \"./final.sh\". :)\n"
