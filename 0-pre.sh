@@ -281,6 +281,7 @@ ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/lf ~/.config/lf
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpd ~/.config/mpd
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpv ~/.config/mpv
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/ncmpcpp ~/.config/ncmpcpp
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/neofetch ~/.config/neofetch
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/newsboat ~/.config/newsboat
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/npm ~/.config/npm
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim ~/.config/nvim
