@@ -293,7 +293,7 @@ ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/user-dirs.dirs ~/.config/use
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zathura ~/.config/zathura
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zsh ~/.config/zsh
 ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/wgetrc ~/.config/wgetrc
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin ~/.local/bin
+ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/* ~/.local/bin/
 ln -s ~/.config/shell/profile ~/.zprofile
 
 # rename a directory and readjust some config files to line up with username 
