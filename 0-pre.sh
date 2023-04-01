@@ -141,7 +141,7 @@ sed -i 's/^#ParallelDownloads = 5/ParallelDownloads = 15/' /etc/pacman.conf
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $(nproc) -z -)/g" /etc/makepkg.conf
 
-# make an 8GB encryoted swapfile and set swappiness to 1
+# make an 8GB encrypted swapfile and set swappiness to 1
 cd /opt || exit
 dd if=/dev/zero of=swap bs=1M count=8192 status=progress
 cryptsetup --type plain -d /dev/urandom open swap swap
@@ -169,11 +169,11 @@ pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget man-db pipewire \
     pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers neovim \
     reflector polkit
 
-# add some stuff mkinitcpio.conf hooks
+# add some stuff to mkinitcpio.conf hooks
 sed -i "s/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
 
 # uncomment if you want to load modules for hijacking graphics card. For GPU Passthrough
-#sed -i "s/MODULES=()/MODULES=(vfio_pci vfio vfio_iommu_type1 vfio_virqfd)/" /etc/mkinitcpio.conf
+#sed -i "s/MODULES=()/MODULES=(vfio_pci vfio vfio_iommu_type1)/" /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 # relink dash to /bin/sh and create hook to relink dash to /bin/sh everytime bash gets updated
@@ -253,9 +253,8 @@ printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 sudo ufw enable
 
 # making directories
-mkdir -p ~/.config ~/.local ~/.local/bin ~/.local/share/cargo ~/.local/share/go \
-    ~/.local/share/wallpapers ~/documents ~/downloads ~/music \
-    ~/pictures/mpv-screenshots ~/pictures/scrot-screenshots ~/videos ~/projects
+mkdir -p ~/documents ~/downloads ~/music ~/videos ~/pictures/screenshots ~/projects \
+    ~/.config ~/.local/bin ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers
 
 # exports
 export CARGO_HOME="$HOME/.local/share/cargo"
@@ -267,94 +266,100 @@ sudo mkdir /mnt/usb /mnt/hdd
 sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
 sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
 
-# wget and set dracula-themed wallpaper
+# wget and set wallpaper
 wget https://raw.githubusercontent.com/catppuccin/wallpapers/main/flatppuccin/flatppuccin_4k_macchiato.png -O ~/.local/share/wallpapers/flatppuccin.png
 ln -s ~/.local/share/wallpapers/flatppuccin.png ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/alacritty ~/.config/alacritty
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/dunst ~/.config/dunst
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0 ~/.config/gtk-2.0
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0 ~/.config/gtk-3.0
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/lf ~/.config/lf
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpd ~/.config/mpd
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/mpv ~/.config/mpv
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/ncmpcpp ~/.config/ncmpcpp
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/neofetch ~/.config/neofetch
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/newsboat ~/.config/newsboat
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/npm ~/.config/npm
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/nvim ~/.config/nvim
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/pcmanfm ~/.config/pcmanfm
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/shell ~/.config/shell
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/sxhkd ~/.config/sxhkd
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/x11 ~/.config/x11
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/user-dirs.dirs ~/.config/user-dirs.dirs
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zathura ~/.config/zathura
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/zsh ~/.config/zsh
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/wgetrc ~/.config/wgetrc
-ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/* ~/.local/bin/
-ln -s ~/.config/shell/profile ~/.zprofile
+dirs="alacritty dunst gtk-2.0 gtk-3.0 lf mpd mpv ncmpcpp neofetch newsboat npm nvim pcmanfm shell user-dirs.dirs zathura zsh wgetrc"
+for dir in $dirs; do
+    ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/$dir ~/.config/$dir
+done
+ln -sf ~/.config/shell/profile ~/.zprofile
+scpt="lfrun sauce vimv"
+for scp in $scpt; do
+    ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/$scp ~/.local/bin/$scp
+done
+sudo cp ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/bctl /usr/local/bin/bctl
 
-# rename a directory and readjust some config files to line up with username 
+# rename a directory and readjust some config files to line up with username
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0/gtkrc
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0/bookmarks
 
+# prompt if user wants to use X11 as display server
+printf "Do you want to use X11 as your display server? If you pick n, Wayland will be used as display server. (y/n): "
+read -r ans
+case "$ans" in
+    y|Y) pacpackages="xorg-server xorg-xinit xorg-xev scrot xwallpaper xclip ffmpegthumbnailer wmname ueberzug sxhkd"
+        aurpackages="nsxiv-git"
+        ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/x11 ~/.config/x11
+        ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/dmenu-pass ~/.local/bin/dmenu-pass
+        ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/dmenu-sys ~/.local/bin/dmenu-sys
+        ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/setbg ~/.local/bin/setbg
+        ;;
+    *) pacpackages="wayland-protocols swaybg swaylock grim slurp foot wl-clipboard"
+        aurpackages="hyprland-bin waybar-hyprland-git rofi-lbonn-wayland-git"
+        dirs="hypr rofi swaylock waybar"
+        for dir in $dirs; do
+            ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/$dir ~/.config/$dir
+        done
+        sed -i 's/_dplay="x"/_dplay="w"/g' ~/.local/src/DefinitelyNotMai/dotfiles/config/shell/profile ;;
+esac
+
 # install packages I use
-sudo pacman -S xorg-server xorg-xinit xorg-xev libnotify mpd mpv ncmpcpp htop \
-    libreoffice-fresh dunst gimp lxappearance bc keepassxc pcmanfm scrot time \
-    zathura zathura-pdf-mupdf zathura-cb obs-studio pulsemixer jdk-openjdk zsh \
-    jre-openjdk jre-openjdk-headless xwallpaper p7zip unzip unrar rust go fzf \
-    zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono highlight xclip \
-    ffmpegthumbnailer odt2txt catdoc docx2txt perl-image-exiftool android-tools \
-    python-pdftotext android-tools noto-fonts-emoji noto-fonts-cjk firefox cmake \
-    alacritty newsboat wmname ueberzug npm ripgrep tree neofetch openssh \
-    ttc-iosevka-slab lua-language-server pyright deno rust-analyzer gopls \
-    autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
-    dmidecode libxpresent spice-protocol dkms qemu-audio-jack asciiquarium \
-    power-profiles-daemon yt-dlp sxhkd papirus-icon-theme
+sudo pacman -S "$pacpackages" libnotify mpd mpv ncmpcpp htop libreoffice-fresh dunst gimp bc \
+    lxappearance keepassxc pcmanfm time zathura zathura-pdf-mupdf zathura-cb \
+    obs-studio jdk-openjdk jre-openjdk jre-openjdk-headless zsh p7zip unzip zip \
+    unrar rust go fzf zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono \
+    highlight odt2txt catdoc docx2txt perl-image-exiftool android-tools python-pdftotext \
+    noto-fonts-emoji noto-fonts-cjk firefox cmake alacritty newsboat npm ripgrep \
+    tree neofetch openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer \
+    gopls autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
+    dmidecode libxpresent spice-protocol dkms qemu-audio-jack asciiquarium yt-dlp \
+    papirus-icon-theme power-profiles-daemon
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 
-# install AUR helper and AUR packages I use
-git clone https://aur.archlinux.org/paru-git ~/.local/src/paru-git
-cd ~/.local/src/paru-git || exit
+# install paru, an AUR helper and AUR packages I use
+git clone https://aur.archlinux.org/paru-git ~/.local/src/morganamilo/paru
+cd ~/.local/src/morganamilo/paru
 makepkg -si
+
+# install AUR packages I use
+paru -S "$aurpackages" brave-bin freetube-bin ungoogled-chromium-bin lf-git \
+    catppuccin-gtk-theme-mocha otpclient stylua
+
+# change some paru settings
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
-paru brave-bin
-paru freetube-bin
-paru ungoogled-chromium-bin
-paru nsxiv-git
-paru lf-git
-paru catppuccin-gtk-theme-mocha
-paru otpclient
-paru stylua
 sudo sed -i "/\[bin\]/,/FileManager = vifm/"'s/^#//' /etc/paru.conf
 sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
-# install my suckless tools
-cd ~/.local/src/DefinitelyNotMai/ || exit
-git clone https://github.com/DefinitelyNotMai/dmenu.git
-git clone https://github.com/DefinitelyNotMai/dwm.git
-git clone https://github.com/DefinitelyNotMai/scroll.git
-git clone https://github.com/DefinitelyNotMai/slock.git
-git clone https://github.com/DefinitelyNotMai/slstatus.git
-git clone https://github.com/DefinitelyNotMai/st.git
-cd dmenu && sudo make clean install
-cd ../dwm && sudo make clean install
-cd ../scroll && sudo make clean install
-cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make clean install
-cd ../slstatus && sudo make clean install
-cd ../st && sudo make clean install
+# install my suckless tools if display server is X11
+if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
+    cd ~/.local/src/DefinitelyNotMai/ || exit
+    git clone https://github.com/DefinitelyNotMai/dmenu.git
+    git clone https://github.com/DefinitelyNotMai/dwm.git
+    git clone https://github.com/DefinitelyNotMai/scroll.git
+    git clone https://github.com/DefinitelyNotMai/slock.git
+    git clone https://github.com/DefinitelyNotMai/slstatus.git
+    git clone https://github.com/DefinitelyNotMai/st.git
+    cd dmenu && sudo make clean install
+    cd ../dwm && sudo make clean install
+    cd ../scroll && sudo make clean install
+    cd ../slock && sed -i "s/= \"user\"/= \"$(whoami)\"/" config.h && sudo make clean install
+    cd ../slstatus && sudo make clean install
+    cd ../st && sudo make clean install
+fi
 
 # enable services
 sudo systemctl enable power-profiles-daemon
 sudo systemctl enable libvirtd
 
 # add user to groups
-sudo usermod -aG libvirt,kvm $(whoami)
+sudo usermod -aG libvirt,kvm,input $(whoami)
 
 # change shell to zsh
 chsh -s /usr/bin/zsh
