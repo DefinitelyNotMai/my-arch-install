@@ -274,7 +274,7 @@ ln -s ~/.local/share/wallpapers/flatppuccin.png ~/.local/share/bg
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
 dirs="alacritty dunst gtk-2.0 gtk-3.0 lf mpd mpv ncmpcpp neofetch newsboat npm nvim pcmanfm shell user-dirs.dirs zathura zsh wgetrc"
 for dir in $dirs; do
-    ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/$dir ~/.config/$dir
+    ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/$dir ~/.config/$dir
 done
 ln -sf ~/.config/shell/profile ~/.zprofile
 scpt="lfrun sauce vimv"
@@ -308,7 +308,7 @@ case "$ans" in
 esac
 
 # install packages I use
-sudo pacman -S "$pacpackages" libnotify mpd mpv ncmpcpp htop libreoffice-fresh dunst gimp bc \
+eval sudo pacman -S "$pacpackages" libnotify mpd mpv ncmpcpp htop libreoffice-fresh dunst gimp bc \
     lxappearance keepassxc pcmanfm time zathura zathura-pdf-mupdf zathura-cb \
     obs-studio jdk-openjdk jre-openjdk jre-openjdk-headless zsh p7zip unzip zip \
     unrar rust go fzf zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono \
@@ -329,7 +329,7 @@ cd ~/.local/src/morganamilo/paru
 makepkg -si
 
 # install AUR packages I use
-paru -S "$aurpackages" brave-bin freetube-bin ungoogled-chromium-bin lf-git \
+eval paru -S "$aurpackages" brave-bin freetube-bin ungoogled-chromium-bin lf-git \
     catppuccin-gtk-theme-mocha otpclient stylua
 
 # change some paru settings
