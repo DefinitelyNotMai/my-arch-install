@@ -292,15 +292,15 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0
 printf "Do you want to use X11 as your display server? If you pick n, Wayland will be used as display server. (y/n): "
 read -r ans
 case "$ans" in
-    y|Y) pacpackages="xorg-server xorg-xinit xorg-xev scrot xwallpaper xclip ffmpegthumbnailer wmname ueberzug sxhkd"
-        aurpackages="nsxiv-git"
+    y|Y) pacpackages="xorg-server xorg-xinit xorg-xev scrot xwallpaper xclip wmname ueberzug sxhkd"
+        aurpackages="nsxiv-git lf-git"
         ln -s ~/.local/src/DefinitelyNotMai/dotfiles/config/x11 ~/.config/x11
         ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/dmenu-pass ~/.local/bin/dmenu-pass
         ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/dmenu-sys ~/.local/bin/dmenu-sys
         ln -s ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/setbg ~/.local/bin/setbg
         ;;
-    *) pacpackages="wayland-protocols swaybg swaylock grim slurp foot wl-clipboard"
-        aurpackages="hyprland-bin waybar-hyprland-git rofi-lbonn-wayland-git"
+    *) pacpackages="wayland-protocols swaybg swaylock grim slurp foot wl-clipboard imv chafa"
+        aurpackages="hyprland-bin waybar-hyprland-git rofi-lbonn-wayland-git mcomix-git epub-thumbnailer-git lf-sixel-git"
         dirs="hypr rofi swaylock waybar"
         for dir in $dirs; do
             ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/$dir ~/.config/$dir
@@ -309,16 +309,30 @@ case "$ans" in
 esac
 
 # install packages I use
-eval sudo pacman -S "$pacpackages" libnotify mpd mpv ncmpcpp htop libreoffice-fresh dunst gimp bc \
-    lxappearance keepassxc pcmanfm time zathura zathura-pdf-mupdf zathura-cb \
-    obs-studio jdk-openjdk jre-openjdk jre-openjdk-headless zsh p7zip unzip zip \
-    unrar rust go fzf zsh-syntax-highlighting ttf-nerd-fonts-symbols-2048-em-mono \
-    highlight odt2txt catdoc docx2txt perl-image-exiftool android-tools python-pdftotext \
-    noto-fonts-emoji noto-fonts-cjk firefox cmake alacritty newsboat npm ripgrep \
-    tree neofetch openssh ttc-iosevka-slab lua-language-server pyright deno rust-analyzer \
-    gopls autopep8 qemu-base libvirt virt-manager edk2-ovmf dnsmasq iptables-nft \
-    dmidecode libxpresent spice-protocol dkms qemu-audio-jack asciiquarium yt-dlp \
-    papirus-icon-theme power-profiles-daemon
+eval sudo pacman -S "$pacpackages" libnotify dunst pacman-contrib dkms cmake openssh \
+    rust go npm jdk-openjdk jre-openjdk jre-openjdk-headless zsh zsh-syntax-highlighting \
+    fzf time tree bc p7zip unzip zip unrar glow odt2txt catdoc docx2txt gnumeric poppler \
+    w3m perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
+    mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
+    zathura-cb alacritty libreoffice-fresh gimp lxappearance keepassxc pcmanfm obs-studio \
+    firefox lua-language-server pyright deno rust-analyzer gopls autopep8 stylua \
+    papirus-icon-theme ttf-nerd-fonts-symbols-2048-em-mono noto-fonts-emoji noto-fonts-cjk \
+    ttc-iosevka-slab qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
+    iptables-nft dmidecode libxpresent spice-protocol power-profiles-daemon
+
+# create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
+{
+    printf "[Trigger]\n"
+    printf "Operation = Remove\n"
+    printf "Operation = Install\n"
+    printf "Operation = Upgrade\n"
+    printf "Type = Package\n"
+    printf "Target = *\n\n"
+    printf "[Action]\n"
+    printf "Description = Keep the last cache and currently installed.\n"
+    printf "When = PostTransaction\n"
+    printf "Exec = /usr/bin/paccache -rvk2\n"
+} > /usr/share/libalpm/hooks/pacman-cache-cleanup.hook
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
@@ -330,8 +344,8 @@ cd ~/.local/src/morganamilo/paru
 makepkg -si
 
 # install AUR packages I use
-eval paru -S "$aurpackages" brave-bin freetube-bin ungoogled-chromium-bin lf-git \
-    catppuccin-gtk-theme-mocha otpclient stylua
+eval paru -S "$aurpackages" brave-bin freetube-bin ungoogled-chromium-bin \
+    catppuccin-gtk-theme-mocha otpclient
 
 # change some paru settings
 sudo sed -i "s/#BottomUp/BottomUp/" /etc/paru.conf
