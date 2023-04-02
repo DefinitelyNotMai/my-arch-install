@@ -254,7 +254,8 @@ sudo ufw enable
 
 # making directories
 mkdir -p ~/documents ~/downloads ~/music ~/videos ~/pictures/screenshots ~/projects \
-    ~/.config ~/.local/bin ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers
+    ~/.config ~/.local/bin ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers \
+    ~/.local/share/zsh_history
 
 # exports
 export CARGO_HOME="$HOME/.local/share/cargo"
