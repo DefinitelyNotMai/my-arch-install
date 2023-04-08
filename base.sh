@@ -107,13 +107,15 @@ while true; do
     read -r ans
     case "$ans" in
         [yY]) cp /post.sh /home/"$usn"/post.sh
-            shred -v /base.sh /vars && rm /base.sh /vars
             chown "$usn":"$usn" /home/"$usn"/post.sh
             chmod +x /home/"$usn"/post.sh
-            printf "You answered Yes. Script has been copied to /home/%s/post.sh\nRun \"./post.sh\" after rebooting.\n" "$usn" ;;
-        [nN]) printf "You answered No. You can reboot now and goodluck with the rest of your installation :)\n" ;;
+            printf "You answered Yes. Script has been copied to /home/%s/post.sh\nRun \"./post.sh\" after rebooting.\n" "$usn"
+            break ;;
+        [nN]) printf "You answered No. You can reboot now and goodluck with the rest of your installation :)\n"
+            break ;;
         *) printf "Invalid input. Please enter \"y\" or \"n\"\n" ;;
     esac
-    printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 done
+shred -v /base.sh /post.sh /vars && rm /base.sh /post.sh /vars
+printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
 exit
