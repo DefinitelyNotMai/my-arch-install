@@ -116,6 +116,6 @@ while true; do
         *) printf "Invalid input. Please enter \"y\" or \"n\"\n" ;;
     esac
 done
-shred -v /base.sh /post.sh /vars && rm /base.sh /post.sh /vars
 printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
+shred /base.sh /post.sh /vars && rm -f /base.sh /post.sh /vars
 exit
