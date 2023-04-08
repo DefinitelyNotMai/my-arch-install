@@ -50,7 +50,7 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     tree bc p7zip unzip zip unrar glow odt2txt catdoc docx2txt \
     perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
     mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
-    zathura-cb alacritty libreoffice-fresh gimp lxappearance keepassxc pcmanfm obs-studio \
+    zathura-cb alacritty libreoffice-fresh gimp keepassxc thunar obs-studio \
     firefox lua-language-server pyright deno rust-analyzer gopls autopep8 stylua \
     papirus-icon-theme ttf-nerd-fonts-symbols-2048-em-mono noto-fonts-emoji noto-fonts-cjk \
     ttc-iosevka-slab qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
