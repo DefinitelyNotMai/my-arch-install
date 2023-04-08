@@ -57,7 +57,7 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     iptables-nft dmidecode libxpresent spice-protocol power-profiles-daemon
 
 # create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
-{
+sudo sh -c '{
     printf "[Trigger]\n"
     printf "Operation = Remove\n"
     printf "Operation = Install\n"
@@ -68,7 +68,7 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     printf "Description = Keep the last cache and currently installed.\n"
     printf "When = PostTransaction\n"
     printf "Exec = /usr/bin/paccache -rvk2\n"
-} > /usr/share/libalpm/hooks/pacman-cache-cleanup.hook
+} > /usr/share/libalpm/hooks/pacman-cache-cleanup.hook'
 
 # install packer.nvim, a plugin manager for neovim written in Lua
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
