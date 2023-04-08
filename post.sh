@@ -80,8 +80,8 @@ cd ~/.local/src/morganamilo/paru || exit
 makepkg -si
 
 # install AUR packages I use
-eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git rofi-lbonn-wayland-git \
-    mcomix-git epub-thumbnailer-git lf-sixel-git brave-bin freetube-bin ungoogled-chromium-bin \
+eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git hyprpicker-git \
+    nwg-look-bin lf-sixel-git brave-bin freetube-bin ungoogled-chromium-bin \
     catppuccin-gtk-theme-mocha otpclient
 paru -Rns xdg-desktop-portal-gtk
 
