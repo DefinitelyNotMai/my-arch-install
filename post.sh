@@ -23,8 +23,8 @@ sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
 sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
 
 # wget and set wallpaper
-wget https://raw.githubusercontent.com/catppuccin/wallpapers/main/flatppuccin/flatppuccin_4k_macchiato.png -O ~/.local/share/wallpapers/flatppuccin.png
-ln -s ~/.local/share/wallpapers/flatppuccin.png ~/.local/share/bg
+wget https://i.redd.it/eicxypz6q3171.png -O ~/.local/share/wallpapers/meteor-shower.png
+ln -s ~/.local/share/wallpapers/meteor-shower.png ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
