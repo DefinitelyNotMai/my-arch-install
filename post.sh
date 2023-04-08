@@ -47,7 +47,7 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0
 eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboard \
     imv hyprland chafa libnotify dunst pacman-contrib dkms cmake openssh rust go npm \
     jdk-openjdk jre-openjdk jre-openjdk-headless zsh zsh-syntax-highlighting fzf time \
-    tree bc p7zip unzip zip unrar glow odt2txt catdoc docx2txt gnumeric poppler w3m \
+    tree bc p7zip unzip zip unrar glow odt2txt catdoc docx2txt \
     perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
     mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
     zathura-cb alacritty libreoffice-fresh gimp lxappearance keepassxc pcmanfm obs-studio \
