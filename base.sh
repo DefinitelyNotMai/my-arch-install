@@ -117,5 +117,5 @@ while true; do
     esac
 done
 printf "Base Installation done! Run \"umount -a\", and \"reboot now\" :)\n"
-shred /base.sh /post.sh /vars && rm -f /base.sh /post.sh /vars
+rm -f /base.sh /post.sh /vars
 exit
