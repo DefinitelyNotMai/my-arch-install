@@ -192,4 +192,3 @@ clear
 printf "Pre-installation done! Performing Base installation now...\n"
 sleep 3
 arch-chroot /mnt ./base.sh
-exit
