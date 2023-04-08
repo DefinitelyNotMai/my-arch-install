@@ -33,7 +33,7 @@ for dir in $dirs; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/"$dir" ~/.config/"$dir"
 done
 ln -sf ~/.config/shell/profile ~/.zprofile
-scpt="hyprland-gaps-dec hyprland-gaps-inc hyprland-gaps-reset lfrun rofi-sys sauce vimv"
+scpt="hyprland-gaps-dec hyprland-gaps-inc hyprland-gaps-reset lfrun bemenu-sys sauce vimv"
 for scp in $scpt; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/"$scp" ~/.local/bin/"$scp"
 done
