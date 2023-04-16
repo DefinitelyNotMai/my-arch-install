@@ -83,8 +83,8 @@ makepkg -si
 
 # install AUR packages I use
 eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git hyprpicker-git \
-    nwg-look-bin lf-sixel-git brave-bin freetube-bin ungoogled-chromium-bin \
-    catppuccin-gtk-theme-mocha otpclient
+    nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
+    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git
 paru -Rns xdg-desktop-portal-gtk
 
 # change some paru settings
