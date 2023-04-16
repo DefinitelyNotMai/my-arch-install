@@ -77,8 +77,8 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 
 # install paru, an AUR helper and AUR packages I use
-git clone https://aur.archlinux.org/paru-git ~/.local/src/morganamilo/paru
-cd ~/.local/src/morganamilo/paru || exit
+git clone https://aur.archlinux.org/paru-git ~/.local/src/morganamilo/paru-git
+cd ~/.local/src/morganamilo/paru-git || exit
 makepkg -si
 
 # install AUR packages I use
