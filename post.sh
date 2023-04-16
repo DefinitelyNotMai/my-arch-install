@@ -28,12 +28,13 @@ ln -s ~/.local/share/wallpapers/pixel.jpg ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
-dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim pcmanfm rofi shell swaylock waybar user-dirs.dirs zathura zsh wgetrc"
+dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim shell swaylock tofi transmission-daemon waybar zathura zsh mimeapps.list user-dirs.dirs wgetrc"
 for dir in $dirs; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/"$dir" ~/.config/"$dir"
 done
 ln -sf ~/.config/shell/profile ~/.zprofile
-scpt="hyprland-gaps-dec hyprland-gaps-inc hyprland-gaps-reset lfrun bemenu-sys sauce vimv"
+ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/share/applications ~/.local/applications
+scpt="lfrun sauce tofi-sys tordone transadd vimv"
 for scp in $scpt; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/"$scp" ~/.local/bin/"$scp"
 done
@@ -42,6 +43,7 @@ sudo cp ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/bctl /usr/local/bin/bct
 # rename a directory and readjust some config files to line up with username
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0/gtkrc
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-3.0/bookmarks
+sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/transmission-daemon/settings.json
 
 # install packages I use
 eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboard \
