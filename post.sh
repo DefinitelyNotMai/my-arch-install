@@ -102,9 +102,6 @@ sudo usermod -aG libvirt,kvm,input "$(whoami)"
 # change shell to zsh
 chsh -s /usr/bin/zsh
 
-# echo out an npm installation script for neovim config to be ran after restart
-printf "#!/bin/sh\n\nnpm i -g typescript typescript-language-server vscode-langservers-extracted @volar/vue-language-server @tailwindcss/language-server yaml-language-server emmet-ls neovim graphql-language-service-cli @astrojs/language-server prettier" > ~/final.sh
-
 # done
 clear
-printf "Post installation done! Run \"systemctl reboot\" and after logging in, open a terminal and run \"./final.sh\". :)\n"
+printf "Post installation done! Run \"systemctl reboot\" :)\n"
