@@ -55,7 +55,7 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     zathura-cb alacritty libreoffice-fresh gimp keepassxc thunar obs-studio \
     firefox \
     papirus-icon-theme ttf-nerd-fonts-symbols-2048-em-mono noto-fonts-emoji noto-fonts-cjk \
-    ttf-hack qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
+    terminus-font qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
     iptables-nft dmidecode libxpresent spice-protocol power-profiles-daemon
 
 # create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
