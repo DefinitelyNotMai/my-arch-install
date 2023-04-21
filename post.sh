@@ -91,7 +91,6 @@ sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
 # enable services
 sudo systemctl enable power-profiles-daemon
-sudo systemctl enable libvirtd
 
 # add user to groups
 sudo usermod -aG libvirt,kvm,input "$(whoami)"
