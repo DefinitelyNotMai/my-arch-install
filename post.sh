@@ -73,10 +73,6 @@ sudo sh -c '{
     printf "Exec = /usr/bin/paccache -rvk2\n"
 } > /usr/share/libalpm/hooks/pacman-cache-cleanup.hook'
 
-# install packer.nvim, a plugin manager for neovim written in Lua
-git clone --depth 1 https://github.com/wbthomason/packer.nvim\
- ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-
 # install paru, an AUR helper and AUR packages I use
 git clone https://aur.archlinux.org/paru-git ~/.local/src/morganamilo/paru-git
 cd ~/.local/src/morganamilo/paru-git || exit
