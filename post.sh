@@ -12,11 +12,6 @@ mkdir -p ~/documents ~/downloads ~/music ~/videos ~/pictures/screenshots ~/proje
     ~/.config ~/.local/bin ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers \
     ~/.local/share/zsh_history
 
-# exports
-export CARGO_HOME="$HOME/.local/share/cargo"
-export GOPATH="$HOME/.local/share/go"
-export LESSHISTFILE="-"
-
 # make mount directories. I personally separate mount dirs for my flashdrive and hdd
 sudo mkdir /mnt/usb /mnt/hdd
 sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
@@ -39,6 +34,12 @@ for scp in $scpt; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/"$scp" ~/.local/bin/"$scp"
 done
 sudo cp ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/bctl /usr/local/bin/bctl
+
+# exports
+export CARGO_HOME="$HOME/.local/share/cargo"
+export GOPATH="$HOME/.local/share/go"
+export LESSHISTFILE="-"
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 
 # rename a directory and readjust some config files to line up with username
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0/gtkrc
