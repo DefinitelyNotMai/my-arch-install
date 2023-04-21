@@ -96,6 +96,9 @@ sudo systemctl enable libvirtd
 # add user to groups
 sudo usermod -aG libvirt,kvm,input "$(whoami)"
 
+# install typescript globally with npm
+npm install -g typescript
+
 # change shell to zsh
 chsh -s /usr/bin/zsh
 
