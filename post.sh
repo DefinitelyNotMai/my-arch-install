@@ -39,7 +39,6 @@ sudo cp ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/bctl /usr/local/bin/bct
 export CARGO_HOME="$HOME/.local/share/cargo"
 export GOPATH="$HOME/.local/share/go"
 export LESSHISTFILE="-"
-export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 
 # rename a directory and readjust some config files to line up with username
 sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/gtk-2.0/gtkrc
@@ -94,9 +93,6 @@ sudo systemctl enable power-profiles-daemon
 
 # add user to groups
 sudo usermod -aG libvirt,kvm,input "$(whoami)"
-
-# install typescript globally with npm
-npm install -g typescript
 
 # change shell to zsh
 chsh -s /usr/bin/zsh
