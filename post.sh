@@ -18,8 +18,8 @@ sudo chown "$(whoami)": /mnt/usb && sudo chmod 750 /mnt/usb
 sudo chown "$(whoami)": /mnt/hdd && sudo chmod 750 /mnt/hdd
 
 # wget and set wallpaper
-wget https://wallpapercave.com/wp/oYQNiuw.jpg -O ~/.local/share/wallpapers/yes-man.jpg
-ln -s ~/.local/share/wallpapers/yes-man.jpg ~/.local/share/bg
+wget https://wallpaperaccess.com/full/419326.jpg -O ~/.local/share/wallpapers/statue.jpg
+ln -s ~/.local/share/wallpapers/statue.jpg ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
