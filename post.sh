@@ -78,9 +78,9 @@ cd ~/.local/src/morganamilo/paru-git || exit
 makepkg -si
 
 # install AUR packages I use
-eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git hyprpicker-git \
-    nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
-    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git
+eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git xdg-desktop-portal-gtk \
+    hyprpicker-git nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
+    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git ttf-comic-mono
 paru -Rns xdg-desktop-portal-gtk
 
 # change some paru settings
