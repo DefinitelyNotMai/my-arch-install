@@ -23,7 +23,7 @@ ln -s ~/.local/share/wallpapers/statue.jpg ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
-dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim shell swaylock tofi transmission-daemon waybar zathura zsh mimeapps.list user-dirs.dirs wgetrc"
+dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim qt5ct shell swaylock tofi transmission-daemon waybar zathura zsh mimeapps.list user-dirs.dirs wgetrc"
 for dir in $dirs; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/"$dir" ~/.config/"$dir"
 done
@@ -52,7 +52,7 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
     mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
     zathura-cb alacritty libreoffice-fresh gimp keepassxc thunar obs-studio \
-    firefox qt5-wayland \
+    firefox qt5-wayland qt5ct brightnessctl \
     papirus-icon-theme ttf-nerd-fonts-symbols-2048-em-mono noto-fonts-emoji noto-fonts-cjk \
     terminus-font qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
     iptables-nft dmidecode libxpresent spice-protocol power-profiles-daemon
