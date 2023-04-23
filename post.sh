@@ -100,4 +100,4 @@ chsh -s /usr/bin/zsh
 
 # done
 clear
-printf "Post installation done! Run \"systemctl reboot\" :)\n"
+printf "Post installation done! Run \"systemctl reboot\" and after logging in, open a terminal and run \"npm install -g typescript\" for the neovim config to fully work :)\n"
