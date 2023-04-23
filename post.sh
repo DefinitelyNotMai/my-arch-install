@@ -33,7 +33,6 @@ scpt="lfrun sauce tofi-sys tordone transadd vimv"
 for scp in $scpt; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/"$scp" ~/.local/bin/"$scp"
 done
-sudo cp ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/bctl /usr/local/bin/bctl
 
 # exports
 export CARGO_HOME="$HOME/.local/share/cargo"
