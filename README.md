@@ -8,10 +8,10 @@ Mainly for me but others are free to use this script.
 This script:
 - will wipe your selected drive and will only have Arch Linux on it. Dualbooting is not supported in this script.
 - only makes 2 partitions: root and boot.
-- uses ext4 only, no btrfs or other filesystems.
+- uses btrfs as the filesystem with 5 subvolumes: @, @.snapshots, @home, @log, @cache, and @tmp.
 - encryption type used is LUKS on partition.
 - mounts boot partition in /mnt/boot.
-- makes an 8GB swapfile.
+- uses zramd.
 - makes "dash" your "/bin/sh".
 - uses PipeWire as audio.
 - uses systemd-boot as the bootloader.

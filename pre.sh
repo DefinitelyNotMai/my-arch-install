@@ -106,6 +106,27 @@ while true; do
     fi
 done
 
+# set password for LUKS encryption
+stty -echo
+prompt "Enter password for LUKS encryption: "
+read -r lpass1
+newline
+prompt "Re-enter password: "
+read -r lpass2
+while [ "$lpass1" != "$lpass2" ]; do
+    newline
+    error "Passwords don't match. Try again."
+    newline
+    prompt "Enter password for LUKS encryption: "
+    read -r lpass1
+    newline
+    prompt "Re-enter password: "
+    read -r lpass2
+done
+stty echo
+newline
+success "LUKS encryption password has been set successfully."
+
 # ask if user wants to enable ParallelDownloads and if so, how many?
 while true; do
     prompt "Do you want to enable ParallelDownloads for pacman?(y/n): "
@@ -136,18 +157,36 @@ sgdisk -Z /dev/"$dr"
 sgdisk -a 2048 -o /dev/"$dr"
 
 # create partitions
-sgdisk -n 1::300M --typecode=1:ef00 /dev/"$dr"
+sgdisk -n 1::512M --typecode=1:ef00 /dev/"$dr"
 sgdisk -n 2::-0 --typecode=2:8300 /dev/"$dr"
 
 # encrypt and format root partition, and format boot partition
-cryptsetup -y -v luksFormat "$rp"
-cryptsetup open "$rp" crypt-root
-mkfs.ext4 /dev/mapper/crypt-root
+printf "%s\n" "$luks_pass1" | cryptsetup luksFormat "$rp"
+printf "%s\n" "$luks_pass1" | cryptsetup luksOpen "$rp" crypt-root
+mkfs.btrfs /dev/mapper/crypt-root
 mkfs.vfat "$bp"
 
 # mount root and boot partition
 mount /dev/mapper/crypt-root /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@.snapshots
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@log
+btrfs subvolume create /mnt/@cache
+btrfs subvolume create /mnt/@tmp
+umount /mnt
+mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@ /dev/mapper/crypt-root /mnt
+mkdir /mnt/.snapshots
+mkdir /mnt/home
+mkdir -p /mnt/var/log
+mkdir -p /mnt/var/cache
+mkdir /mnt/tmp
 mkdir /mnt/boot
+mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@.snapshots /dev/mapper/crypt-root /mnt/.snapshots
+mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@home /dev/mapper/crypt-root /mnt/home
+mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@log /dev/mapper/crypt-root /mnt/var/log
+mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@cache /dev/mapper/crypt-root /mnt/var/cache
+mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@tmp /dev/mapper/crypt-root /mnt/tmp
 mount "$bp" /mnt/boot
 
 # determine if processor is AMD or Intel for microcode package
@@ -158,7 +197,7 @@ case "$cpu" in
 esac
 
 # install essential packages
-pacstrap /mnt base base-devel linux linux-firmware "$microcode"
+pacstrap /mnt base base-devel linux linux-firmware btrfs-progs "$microcode"
 
 # run partprobe to reload partition table, then generate fstab file
 partprobe /dev/"$dr"
@@ -175,8 +214,10 @@ cp /etc/pacman.conf /mnt/etc/pacman.conf
     printf "usn=%s\n" "$usn"
     printf "upass=%s\n" "$upass1"
     printf "microcode=%s\n" "$microcode"
-    printf "enc_dr_uuid="
+    printf "root_uuid="
     blkid -s UUID -o value "$rp"
+    printf "\ncrypt_uuid="
+    blkid -s UUID -o value /dev/mapper/crypt-root
 } > vars
 
 # copy vars to source for variables to be used in Base Installation

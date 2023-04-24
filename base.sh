@@ -11,13 +11,7 @@
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $(nproc) -z -)/g" /etc/makepkg.conf
 
-# make an 8GB encrypted swapfile and set swappiness to 1
-cd /opt || exit
-dd if=/dev/zero of=swap bs=1M count=8192 status=progress
-cryptsetup --type plain -d /dev/urandom open swap swap
-chmod 600 swap && mkswap swap && swapon swap
-printf "swap /opt/swap /dev/urandom swap\n" >> /etc/crypttab
-printf "/dev/mapper/swap none swap sw 0 0\n" >> /etc/fstab
+# set swappiness to 1
 printf "vm.swappiness=1\n" >> /etc/sysctl.d/99-swappiness.conf
 
 # set locale, hostname and hosts, and set root password
@@ -41,9 +35,9 @@ pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget man-db pipewire \
 
 # add some stuff to mkinitcpio.conf hooks
 sed -i "s/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
-
+sed -i "s/MODULES=()/MODULES=(btrfs)/" /etc/mkinitcpio.conf
 # uncomment if you want to load modules for hijacking graphics card. For GPU Passthrough
-#sed -i "s/MODULES=()/MODULES=(vfio_pci vfio vfio_iommu_type1)/" /etc/mkinitcpio.conf
+#sed -i "s/MODULES=(btrfs)/MODULES=(vfio_pci vfio vfio_iommu_type1)/" /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 # relink dash to /bin/sh and create hook to relink dash to /bin/sh everytime bash gets updated
@@ -72,14 +66,14 @@ bootctl install
     printf "linux /vmlinuz-linux\n"
     printf "initrd /%s.img\n" "$microcode"
     printf "initrd /initramfs-linux.img\n"
-    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root rw\n" "$enc_dr_uuid"
+    printf "options cryptdevice=UUID=%s:crypt-root root=UUID=%s zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs\n" "$root_uuid" "$crypt_uuid"
 } > /boot/loader/entries/arch.conf
 {
     printf "title Arch Linux (fallback initramfs)\n"
     printf "linux /vmlinuz-linux\n"
     printf "initrd /%s.img\n" "$microcode"
     printf "initrd /initramfs-linux-fallback.img\n"
-    printf "options cryptdevice=UUID=%s:crypt-root root=/dev/mapper/crypt-root rw\n" "$enc_dr_uuid"
+    printf "options cryptdevice=UUID=%s:crypt-root root=UUID=%s zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs\n" "$root_uuid" "$crypt_uuid"
 } > /boot/loader/entries/arch-fallback.conf
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough

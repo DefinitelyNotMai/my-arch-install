@@ -81,7 +81,7 @@ makepkg -si
 # install AUR packages I use
 eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git xdg-desktop-portal-gtk \
     hyprpicker-git nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
-    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git ttf-comic-mono
+    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git ttf-comic-mono-git zramd
 paru -Rns xdg-desktop-portal-gtk
 
 # change some paru settings
@@ -91,6 +91,7 @@ sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 
 # enable services
 sudo systemctl enable power-profiles-daemon
+sudo systemctl enable --now zramd.service
 
 # add user to groups
 sudo usermod -aG libvirt,kvm,input "$(whoami)"
