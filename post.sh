@@ -54,11 +54,11 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     tree bc p7zip unzip zip unrar transmission-cli glow odt2txt catdoc docx2txt \
     perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
     mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
-    zathura-cb alacritty libreoffice-fresh gimp keepassxc thunar obs-studio \
-    firefox qt5-wayland qt5ct brightnessctl \
-    papirus-icon-theme ttf-nerd-fonts-symbols-2048-em-mono noto-fonts-emoji noto-fonts-cjk \
-    terminus-font qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
-    iptables-nft dmidecode libxpresent spice-protocol power-profiles-daemon
+    zathura-cb alacritty libreoffice-fresh keepassxc thunar obs-studio firefox \
+    qt5-wayland qt5ct brightnessctl papirus-icon-theme ttf-nerd-fonts-symbols-mono \
+    noto-fonts-emoji noto-fonts-cjk qemu-base qemu-audio-jack libvirt virt-manager \
+    edk2-ovmf dnsmasq iptables-nft dmidecode libxpresent spice-protocol \
+    power-profiles-daemon
 
 # create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
 sudo sh -c '{
