@@ -106,27 +106,6 @@ while true; do
     fi
 done
 
-# set password for LUKS encryption
-stty -echo
-prompt "Enter password for LUKS encryption: "
-read -r lpass1
-newline
-prompt "Re-enter password: "
-read -r lpass2
-while [ "$lpass1" != "$lpass2" ]; do
-    newline
-    error "Passwords don't match. Try again."
-    newline
-    prompt "Enter password for LUKS encryption: "
-    read -r lpass1
-    newline
-    prompt "Re-enter password: "
-    read -r lpass2
-done
-stty echo
-newline
-success "LUKS encryption password has been set successfully."
-
 # ask if user wants to enable ParallelDownloads and if so, how many?
 while true; do
     prompt "Do you want to enable ParallelDownloads for pacman?(y/n): "
@@ -161,8 +140,8 @@ sgdisk -n 1::512M --typecode=1:ef00 /dev/"$dr"
 sgdisk -n 2::-0 --typecode=2:8300 /dev/"$dr"
 
 # encrypt and format root partition, and format boot partition
-printf "%s\n" "$luks_pass1" | cryptsetup luksFormat "$rp"
-printf "%s\n" "$luks_pass1" | cryptsetup luksOpen "$rp" crypt-root
+cryptsetup -c aes-xts-plain64 -h sha512 --use-urandom -y -v luksFormat "$rp"
+cryptsetup luksOpen "$rp" crypt-root
 mkfs.btrfs /dev/mapper/crypt-root
 mkfs.vfat "$bp"
 
