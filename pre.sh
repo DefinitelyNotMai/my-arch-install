@@ -152,20 +152,17 @@ btrfs subvolume create /mnt/@.snapshots
 btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
-btrfs subvolume create /mnt/@tmp
 umount /mnt
 mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@ /dev/mapper/crypt-root /mnt
 mkdir /mnt/.snapshots
 mkdir /mnt/home
 mkdir -p /mnt/var/log
 mkdir -p /mnt/var/cache
-mkdir /mnt/tmp
 mkdir /mnt/boot
 mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@.snapshots /dev/mapper/crypt-root /mnt/.snapshots
 mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@home /dev/mapper/crypt-root /mnt/home
 mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@log /dev/mapper/crypt-root /mnt/var/log
 mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@cache /dev/mapper/crypt-root /mnt/var/cache
-mount -o rw,relatime,ssd,discard=async,space_cache=v2,compress=zstd,subvol=/@tmp /dev/mapper/crypt-root /mnt/tmp
 mount "$bp" /mnt/boot
 
 # determine if processor is AMD or Intel for microcode package

@@ -8,7 +8,7 @@ Mainly for me but others are free to use this script.
 This script:
 - will wipe your selected drive and will only have Arch Linux on it. Dualbooting is not supported in this script.
 - only makes 2 partitions: root and boot.
-- uses btrfs as the filesystem with 5 subvolumes: @, @.snapshots, @home, @log, @cache, and @tmp.
+- uses btrfs as the filesystem with 4 subvolumes: @, @.snapshots, @home, @log, and @cache.
 - encryption type used is LUKS on partition.
 - mounts boot partition in /mnt/boot.
 - uses zramd.
