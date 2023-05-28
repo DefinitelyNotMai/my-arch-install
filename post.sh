@@ -29,10 +29,7 @@ for dir in $dirs; do
 done
 ln -sf ~/.config/shell/profile ~/.zprofile
 ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/share/applications ~/.local/applications
-ln -sf ~/.config/waybar/aesthetic.css ~/.config/waybar/style.css
-ln -sf ~/.config/waybar/aesthetic.jsonc ~/.config/waybar/config.jsonc
-ln -sf ~/.config/tofi/aesthetic-config ~/.config/tofi/config
-scpt="lfrun min_or_aes sauce setbg tofi-sys tordone transadd vimv"
+scpt="lfrun sauce setbg tofi-sys tordone transadd vimv"
 for scp in $scpt; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/"$scp" ~/.local/bin/"$scp"
 done
