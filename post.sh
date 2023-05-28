@@ -23,7 +23,7 @@ ln -s ~/.local/share/wallpapers/statue.jpg ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
-dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim qt5ct shell swaylock tmux tofi transmission-daemon waybar zathura zsh mimeapps.list user-dirs.dirs wgetrc"
+dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim qt5ct shell swaylock tmux tofi transmission-daemon waybar zathura zsh electron-flags.conf mimeapps.list user-dirs.dirs wgetrc"
 for dir in $dirs; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/"$dir" ~/.config/"$dir"
 done
