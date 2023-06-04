@@ -9,8 +9,8 @@ sudo ufw enable
 
 # making directories
 mkdir -p ~/documents ~/downloads ~/music ~/videos ~/pictures/screenshots ~/projects \
-    ~/.config ~/.local/bin ~/.local/share/cargo ~/.local/share/go ~/.local/share/wallpapers \
-    ~/.local/share/zsh_history
+    ~/.config ~/.local/bin ~/.local/share/cargo ~/.local/share/go ~/.local/share/rustup \
+    ~/.local/share/wallpapers ~/.local/share/zsh_history
 
 # make mount directories. I personally separate mount dirs for my flashdrive and hdd
 sudo mkdir /mnt/usb /mnt/hdd
@@ -29,13 +29,14 @@ for dir in $dirs; do
 done
 ln -sf ~/.config/shell/profile ~/.zprofile
 ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/share/applications ~/.local/applications
-scpt="lfrun sauce setbg tofi-sys tordone transadd vimv"
+scpt="lfrun sauce setbg tofi-pass tofi-sys tordone transadd vimv"
 for scp in $scpt; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/local/bin/"$scp" ~/.local/bin/"$scp"
 done
 
 # exports
 export CARGO_HOME="$HOME/.local/share/cargo"
+export RUSTUP_HOME="$HOME/.local/share/rustup"
 export GOPATH="$HOME/.local/share/go"
 export LESSHISTFILE="-"
 
@@ -46,16 +47,15 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/transmi
 
 # install packages I use
 eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboard \
-    imv hyprland chafa libnotify dunst pacman-contrib dkms cmake openssh rust go npm \
+    imv hyprland chafa libnotify dunst pacman-contrib dkms cmake openssh rustup go npm \
     jdk-openjdk jre-openjdk jre-openjdk-headless zsh zsh-syntax-highlighting fzf time \
     tree bc p7zip unzip zip unrar transmission-cli glow odt2txt catdoc docx2txt \
     perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
     mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
-    zathura-cb alacritty libreoffice-fresh keepassxc obs-studio firefox \
-    qt5-wayland qt5ct brightnessctl ttf-nerd-fonts-symbols-mono \
-    noto-fonts-emoji noto-fonts-cjk terminus-font qemu-base qemu-audio-jack libvirt \
-    virt-manager edk2-ovmf dnsmasq iptables-nft dmidecode libxpresent spice-protocol \
-    power-profiles-daemon tmux
+    zathura-cb alacritty libreoffice-fresh keepassxc obs-studio firefox qt5-wayland \
+    qt5ct brightnessctl ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation \
+    wqy-zenhei qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
+    iptables-nft dmidecode libxpresent spice-protocol power-profiles-daemon tmux
 
 # create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
 sudo sh -c '{
@@ -72,6 +72,7 @@ sudo sh -c '{
 } > /usr/share/libalpm/hooks/pacman-cache-cleanup.hook'
 
 # install paru, an AUR helper and AUR packages I use
+rustup default stable
 git clone https://aur.archlinux.org/paru-git ~/.local/src/morganamilo/paru-git
 cd ~/.local/src/morganamilo/paru-git || exit
 makepkg -si
@@ -79,8 +80,8 @@ makepkg -si
 # install AUR packages I use
 eval paru -S waybar-hyprland-git xdg-desktop-portal-hyprland-git xdg-desktop-portal-gtk \
     hyprpicker-git nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
-    chicago95-gtk-theme-git chicago95-icon-theme-git otpclient tremc-git tofi-git \
-    neovim-git ttf-comic-mono-git zramd
+    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git ttf-comic-mono-git \
+    zramd
 paru -Rns xdg-desktop-portal-gtk
 
 # change some paru settings
