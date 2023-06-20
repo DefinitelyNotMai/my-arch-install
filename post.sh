@@ -23,7 +23,7 @@ ln -s ~/.local/share/wallpapers/statue.jpg ~/.local/share/bg
 
 # clone and symlink my dotfiles
 git clone https://github.com/DefinitelyNotMai/dotfiles ~/.local/src/DefinitelyNotMai/dotfiles
-dirs="alacritty dunst eww foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim qt5ct shell swaylock tmux tofi transmission-daemon waybar zathura zsh electron-flags.conf mimeapps.list user-dirs.dirs wgetrc"
+dirs="alacritty dunst foot gtk-2.0 gtk-3.0 hypr lf mpd mpv ncmpcpp neofetch newsboat npm nvim qt5ct shell swaylock tmux tofi transmission-daemon waybar zathura zsh electron-flags.conf mimeapps.list user-dirs.dirs wgetrc"
 for dir in $dirs; do
     ln -sf ~/.local/src/DefinitelyNotMai/dotfiles/config/"$dir" ~/.config/"$dir"
 done
@@ -47,13 +47,14 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/transmi
 
 # install packages I use
 eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboard \
-    imv hyprland chafa libnotify dunst pacman-contrib dkms cmake openssh rustup go nvm \
-    jdk-openjdk jre-openjdk jre-openjdk-headless jq socat zsh zsh-syntax-highlighting \
-    tmux time tree bc p7zip unzip zip unrar transmission-cli glow odt2txt catdoc docx2txt \
-    perl-image-exiftool ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp \
-    mpd mpv ncmpcpp htop neofetch newsboat asciiquarium zathura zathura-pdf-mupdf \
-    zathura-cb alacritty libreoffice-fresh keepassxc obs-studio firefox qt5-wayland \
-    qt5ct brightnessctl ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation otf-comicshanns-nerd \
+    imv xdg-desktop-portal-gtk xdg-desktop-portal-hyprland hyprland chafa libnotify \
+    dunst pacman-contrib dkms cmake openssh rustup go nvm jdk-openjdk jre-openjdk \
+    jre-openjdk-headless zsh zsh-syntax-highlighting tmux time tree bc p7zip unzip \
+    zip unrar transmission-cli glow odt2txt catdoc docx2txt perl-image-exiftool \
+    ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp mpd mpv ncmpcpp htop \
+    neofetch newsboat asciiquarium zathura zathura-pdf-mupdf zathura-cb alacritty \
+    libreoffice-fresh keepassxc obs-studio firefox qt5-wayland qt5ct brightnessctl \
+    ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation otf-comicshanns-nerd \
     wqy-zenhei qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
     iptables-nft dmidecode spice-protocol power-profiles-daemon
 
@@ -78,9 +79,8 @@ cd ~/.local/src/morganamilo/paru-git || exit
 makepkg -si
 
 # install AUR packages I use
-eval paru -S eww-wayland-git xdg-desktop-portal-hyprland-git xdg-desktop-portal-gtk \
-    hyprpicker-git nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
-    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git zramd
+eval paru -S hyprpicker-git nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
+    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git zramd waybar-hyprland-git
 paru -Rns xdg-desktop-portal-gtk
 
 # change some paru settings
@@ -91,6 +91,8 @@ sudo sed -i 's/vifm/lfrun/' /etc/paru.conf
 # enable services
 sudo systemctl enable power-profiles-daemon
 sudo systemctl enable --now zramd.service
+
+# disable copy-on-write for /var/lib/libvirt/images
 sudo chattr +C /var/lib/libvirt/images/
 
 # add user to groups
