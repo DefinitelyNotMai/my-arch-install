@@ -48,7 +48,7 @@ sed -i "s/user/$(whoami)/" ~/.local/src/DefinitelyNotMai/dotfiles/config/transmi
 # install packages I use
 eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboard \
     imv xdg-desktop-portal-gtk xdg-desktop-portal-hyprland hyprland chafa libnotify \
-    dunst pacman-contrib dkms cmake openssh rustup go nvm jdk-openjdk jre-openjdk \
+    dunst pacman-contrib dkms cmake openssh rustup go jdk-openjdk jre-openjdk \
     jre-openjdk-headless zsh zsh-syntax-highlighting tmux time tree bc p7zip unzip \
     zip unrar transmission-cli glow odt2txt catdoc docx2txt perl-image-exiftool \
     ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp mpd mpv ncmpcpp htop \
@@ -80,7 +80,7 @@ makepkg -si
 
 # install AUR packages I use
 eval paru -S hyprpicker-git nwg-look-bin lf-sixel-git brave-bin mullvad-browser-bin freetube-bin \
-    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git zramd waybar-hyprland-git
+    catppuccin-gtk-theme-mocha otpclient tremc-git tofi-git neovim-git zramd waybar-hyprland-git nvm
 paru -Rns xdg-desktop-portal-gtk
 
 # change some paru settings
