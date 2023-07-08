@@ -54,7 +54,7 @@ eval sudo pacman -S wayland-protocols swaybg swaylock grim slurp foot wl-clipboa
     ffmpegthumbnailer imagemagick ripgrep android-tools yt-dlp mpd mpv ncmpcpp htop \
     neofetch newsboat asciiquarium zathura zathura-pdf-mupdf zathura-cb alacritty \
     libreoffice-fresh obs-studio firefox qt5-wayland qt5ct brightnessctl \
-    ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation otf-comicshanns-nerd \
+    ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation ttf-terminus-nerd \
     wqy-zenhei qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf dnsmasq \
     iptables-nft dmidecode spice-protocol power-profiles-daemon pass
 
