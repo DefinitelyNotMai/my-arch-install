@@ -30,7 +30,7 @@ printf "root:%s" "$rpass" | chpasswd
 
 # install some packages
 pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget man-db pipewire \
-    pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers neovim \
+    pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers \
     reflector polkit
 
 # add some stuff to mkinitcpio.conf hooks
