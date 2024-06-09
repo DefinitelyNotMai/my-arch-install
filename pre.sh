@@ -1,131 +1,116 @@
 #!/bin/sh
 
-# ============================ #
-# ===== PRE INSTALLATION ===== #
-# ============================ #
-
 # formatting
 error() {
-    printf "[\033[1;31mERROR\033[0m] %s" "$1"
+	printf "[\033[1;31mERROR\033[0m] %s\n" "$1"
+}
+
+input() {
+	printf "[\033[1;34mINPUT\033[0m] %s" "$1"
 }
 
 newline() {
-    printf "\n"
-}
-
-prompt() {
-    printf "[\033[1;34mPROMPT\033[0m] %s" "$1"
+	printf "\n"
 }
 
 success() {
-    printf "[\033[1;32mSUCCESS\033[0m] %s\n" "$1"
+	printf "[\033[1;32mSUCCESS\033[0m] %s\n" "$1"
 }
 
 # get hostname
-prompt "Enter desired hostname: "
-read -r hsn
-while ! printf "%s" "$hsn" | grep -q "^[a-z][a-z0-9-]*$"; do
-    error "Invalid hostname. Try again."
-    newline
-    prompt "Enter desired hostname: "
-    read -r hsn
+while true; do
+	input "Enter desired hostname: " && read -r hsn
+	if printf "%s" "$hsn" | grep -q "^[a-z][a-z0-9-]*$"; then
+		success "Hostname will be set to: $hsn"
+		newline
+		break
+	else
+		error "Invalid hostname. Try again."
+	fi
 done
-success "Hostname will be set to: $hsn"
 
 # get root password
 stty -echo
-prompt "Enter password for root: "
-read -r rpass1
-newline
-prompt "Re-enter password: "
-read -r rpass2
-while [ "$rpass1" != "$rpass2" ]; do
-    newline
-    error "Passwords don't match. Try again."
-    newline
-    prompt "Enter password for root: "
-    read -r rpass1
-    newline
-    prompt "Re-enter password: "
-    read -r rpass2
+while true; do
+	input "Enter password for root: " && read -r rpass1
+	newline
+	input "Re-enter password: " && read -r rpass2
+	newline
+	if [ "$rpass1" = "$rpass2" ]; then
+		success "Root password has been set."
+		newline
+		break
+	else
+		error "Passwords do not match. Try again."
+	fi
 done
 stty echo
-newline
-success "Root password has been set successfully."
 
 # get username
-prompt "Enter desired username: "
-read -r usn
-while ! printf "%s" "$usn" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-    error "Invalid username. Try again."
-    newline
-    prompt "Enter desired username: "
-    read -r usn
+while true; do
+	input "Enter desired username: " && read -r usn
+	if printf "%s" "$usn" | grep -q "^[a-z][a-z0-9-]*$"; then
+		success "Username will be set to: $usn"
+		newline
+		break
+	else
+		error "Invalid username. Try again."
+	fi
 done
-success "Username will be set to: $usn"
 
 # get user password
 stty -echo
-prompt "Enter password for $usn: "
-read -r upass1
-newline
-prompt "Re-enter password: "
-read -r upass2
-while [ "$upass1" != "$upass2" ]; do
-    newline
-    error "Passwords don't match. Try again."
-    newline
-    prompt "Enter password for $usn: "
-    read -r upass1
-    newline
-    prompt "Re-enter password: "
-    read -r upass2
+while true; do
+	input "Enter password for $usn: " && read -r upass1
+	newline
+	input "Re-enter password: " && read -r upass2
+	newline
+	if [ "$upass1" = "$upass2" ]; then
+		success "Password for $usn has been set."
+		newline
+		break
+	else
+		error "Passwords do not match. Try again."
+	fi
 done
 stty echo
-newline
-success "User password has been set successfully."
-sleep 3
 
 # get drive to format
-clear
 while true; do
-    lsblk
-    prompt "Enter drive to format (Ex. \"sda\" OR \"nvme0n1\"): "
-    read -r dr
-    if lsblk | grep -qw "$dr"; then
-        success "Drive /dev/$dr exists."
-        case "$dr" in
-            *nvme*) bp=/dev/"$dr"p1 && rp=/dev/"$dr"p2 ;;
-            *) bp=/dev/"$dr"1 && rp=/dev/"$dr"2 ;;
-        esac
-        break
-    else
-        clear
-        error "Drive /dev/$dr doesn't exist. Please enter a valid drive."
-        newline
-    fi
+	lsblk
+	input "Enter drive to format (Ex. \"sda\" OR \"nvme0n1\"): " && read -r dr
+	if lsblk | grep -qw "$dr"; then
+		success "Drive /dev/$dr exists."
+		newline
+		case "$dr" in
+			*nvme*) bp=/dev/"$dr"p1 && rp=/dev/"$dr"p2 ;;
+			*) bp=/dev/"$dr"1 && rp=/dev/"$dr"2 ;;
+		esac
+		break
+	else
+		error "Drive /dev/$dr doesn't exist. Please enter a valid drive."
+		newline
+	fi
 done
 
-# ask if user wants to enable ParallelDownloads and if so, how many?
+# ask if user wants ParallelDownloads
 while true; do
-    prompt "Do you want to enable ParallelDownloads for pacman?(y/n): "
-    read -r ans
-    case "$ans" in
-        [yY]) prompt "Enter desired number for ParallelDownloads: "
-            read -r num
-            [ "$num" -eq "$num" ] 2>/dev/null || { error "Invalid input. Please enter a valid integer."; newline; continue; }
-            sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $num/" /etc/pacman.conf
-            success "ParallelDownloads has been enabled with $num downloads."
-            break ;;
-        [nN]) success "ParallelDownloads will not be enabled."
-            break ;;
-        *) error "Invalid input. Please enter \"y\" or \"n\""
-            newline ;;
-    esac
+	input "Do you want to enable ParallelDownloads for pacman? [y/n] " && read -r ans
+	case "$ans" in
+		[yY]) input "Enter desired number for ParallelDownloads: " && read -r num
+			[ "$num" -eq "$num" ] 2>/dev/null || { error "Invalid input. Please enter a valid integer."; newline; continue;}
+			sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $num/" /etc/pacman.conf
+			success "ParallelDownloads has been enabled with $num downloads."
+			newline
+			break ;;
+		[nN]) success "ParallelDownloads will not be enabled."
+			break ;;
+		*) error "Invalid input. Please enter \"y\" or \"n\"."
+	esac
 done
 
 # update mirrorlist
-printf "\nUpdating mirrorlist with reflector. Please wait...\n"
+printf "Updating mirrorlist with reflector. Please wait...\n"
 reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist --protocol https --download-timeout 20
 
 # sync mirrors and install keyring
@@ -168,12 +153,12 @@ mount "$bp" /mnt/boot
 # determine if processor is AMD or Intel for microcode package
 cpu=$(grep vendor_id /proc/cpuinfo)
 case "$cpu" in
-    *AuthenticAMD) microcode=amd-ucode ;;
-    *GenuineIntel) microcode=intel-ucode ;;
+	*AuthenticAMD) microcode=amd-ucode ;;
+	*GenuineIntel) microcode=intel-ucode ;;
 esac
 
 # install essential packages
-pacstrap /mnt base base-devel linux linux-firmware btrfs-progs "$microcode"
+pacstrap /mnt base base-devel linux linux-firmware btrfs-progs "$microcode" pigzip pbzip2 vim
 
 # run partprobe to reload partition table, then generate fstab file
 partprobe /dev/"$dr"
@@ -185,15 +170,15 @@ cp /etc/pacman.conf /mnt/etc/pacman.conf
 
 # add variables
 {
-    printf "hsn=%s\n" "$hsn"
-    printf "rpass=%s\n" "$rpass1"
-    printf "usn=%s\n" "$usn"
-    printf "upass=%s\n" "$upass1"
-    printf "microcode=%s\n" "$microcode"
-    printf "root_uuid="
-    blkid -s UUID -o value "$rp"
-    printf "\ncrypt_uuid="
-    blkid -s UUID -o value /dev/mapper/crypt-root
+	printf "hsn=%s\n" "$hsn"
+	printf "rpass=%s\n" "$rpass1"
+	printf "usn=%s\n" "$usn"
+	printf "upass=%s\n" "$upass1"
+	printf "microcode=%s\n" "$microcode"
+	printf "root_uuid="
+	blkid -s UUID -o value "$rp"
+	printf "\ncrypt_uuid="
+	blkid -s UUID -o value /dev/mapper/crypt-root
 } > vars
 
 # copy vars to source for variables to be used in Base Installation
