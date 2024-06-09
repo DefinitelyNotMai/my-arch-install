@@ -50,7 +50,7 @@ eval sudo pacman -S wayland-protocols swaylock grim slurp foot wl-clipboard \
 	zathura-cb alacritty libreoffice-fresh obs-studio firefox keepassxc qt5-wayland qt5ct \
 	qt6-wayland qt6ct brightnessctl ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation \
 	wqy-zenhei noto-fonts-emoji qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf \
-	dnsmasq iptables-nft dmidecode spice-protocol power-profiles-daemon
+	dnsmasq iptables-nft dmidecode spice-protocol power-profiles-daemon ninja curl
 
 # create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
 sudo sh -c '{
@@ -65,6 +65,12 @@ sudo sh -c '{
 	printf "When = PostTransaction\n"
 	printf "Exec = /usr/bin/paccache -rvk2\n"
 } > /usr/share/libalpm/hooks/pacman-cache-cleanup.hook'
+
+# install neovim
+git clone --depth=1 https://github.com/neovim/neovim "$HOME"/.local/src/neovim/neovim
+cd "$HOME"/.local/src/neovim/neovim || exit
+make CMAKE_BUILD_TYPE=Release
+sudo make install
 
 # install rustup, sccache, and pfetch
 rustup default nightly
