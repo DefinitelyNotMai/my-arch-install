@@ -17,12 +17,12 @@ success() {
 . /vars
 
 # makepkg optimizations
-sed -i "s/-march=x86-64 -mtune=generic/-march=native -mtune=native" /etc/makepkg.conf
+sed -i "s/-march=x86-64 -mtune=generic/-march=native -mtune=native/" /etc/makepkg.conf
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 sed -i "s/^#BUILDDIR/BUILDDIR/" /etc/makepkg.conf
 sed -i "s/^COMPRESSGZ=(gzip -c -f -n)/COMPRESSGZ=(pigz -c -f -n)/" /etc/makepkg.conf
 sed -i "s/^COMPRESSBZ2=(bzip2 -c -f)/COMPRESSBZ2=(pbzip2 -c -f)/" /etc/makepkg.conf
-sed -i "s/^COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -z --threads=0 -)" /etc/makepkg.conf
+sed -i "s/^COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -z --threads=0 -)/" /etc/makepkg.conf
 
 # set swappiness to 1
 printf "vm.swappiness=1\n" >> /etc/sysctl.d/99-swappiness.conf
@@ -47,7 +47,7 @@ pacman -S --noconfirm base-devel dash git linux-headers man-db networkmanager \
 	polkit reflector ufw vim wget wireplumber
 
 # modify hooks and modules for mkinitcpio
-sed -i "s/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)" /etc/mkinitcpio.conf
+sed -i "s/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)/" /etc/mkinitcpio.conf
 sed -i "s/MODULES=()/MODULES=(btrfs)/" /etc/mkinitcpio.conf
 # uncomment if you want to load modules for hijacking the graphics card for GPU passthrough
 #sed -i "s/MODULES=(btrfs)/MODULES=(btrfs vfio_pci vfio vfio_iommu_type1)/" /etc/mkinitcpio.conf
@@ -91,7 +91,7 @@ bootctl install
 
 # look for NVidia Card and output it to /tmp for reference to be used in setting kernel parameter for hijacking. Uncomment if planning to do NVidia GPU passthrough
 #lspci -nnk | grep NVIDIA >> /tmp/blkid.txt
-#nvim /boot/loader/entries/arch.conf
+#vim /boot/loader/entries/arch.conf
 # amd_iommu=on iommu=pt vfio-pci.ids=<1>,<2>
 
 # enable services
