@@ -42,15 +42,14 @@ sed -i "s/user/$(whoami)/" "$HOME"/.local/src/DefinitelyNotMai/dotfiles/config/g
 sed -i "s/user/$(whoami)/" "$HOME"/.local/src/DefinitelyNotMai/dotfiles/config/transmission-daemon/settings.json
 
 # install packages
-eval sudo pacman -S wayland-protocols swaylock grim slurp foot wl-clipboard \
-	imv xdg-desktop-portal-gtk xdg-desktop-portal-hyprland hyprland waybar chafa libnotify \
-	dunst pacman-contrib dkms cmake openssh rustup go lf jdk-openjdk jre-openjdk nwg-look \
-	jre-openjdk-headless tmux time tree bc p7zip unzip zip unrar transmission-cli nodejs npm \
-	glow ripgrep fd android-tools yt-dlp mpd mpv ncmpcpp htop newsboat zathura zathura-pdf-mupdf \
-	zathura-cb alacritty libreoffice-fresh obs-studio firefox keepassxc qt5-wayland qt5ct \
-	qt6-wayland qt6ct brightnessctl ttf-nerd-fonts-symbols-mono ttf-dejavu ttf-liberation \
-	wqy-zenhei noto-fonts-emoji qemu-base qemu-audio-jack libvirt virt-manager edk2-ovmf \
-	dnsmasq iptables-nft dmidecode spice-protocol power-profiles-daemon ninja curl
+eval sudo pacman -S alacritty android-tools bc brightnessctl cmake curl dkms dmidecode \
+	dnsmasq dunst fd firefox foot fzf go grim htop hyprland imv iptables-nft jre-openjdk \
+	keepassxc lf libnotify libreoffice-fresh libvirt mpd mpv ncmpcpp newsboat ninja \
+	noto-fonts-emoji npm nwg-look obs-studio openssh p7zip pacman-contrib power-profiles-daemon \
+	qemu-full qt5-wayland qt5ct qt6-wayland qt6ct ripgrep rustup slurp swaylock tmux \
+	transmisison-cli ttf-dejavu ttf-liberation ttf-nerd-fonts-symbols-mono unrar unzip \
+	virt-manager waybar wl-clipboard wqy-zenhei xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
+	yt-dlp zathura zathura-cb zathura-pdf-mupdf zip
 
 # create a hook that cleans up pacman's package cache after every package install, uninstall, or update. Keeps current and last cache.
 sudo sh -c '{

@@ -42,9 +42,9 @@ printf "%s\n" "$hsn" >> /etc/hostname
 printf "root:%s" "$rpass" | chpasswd
 
 # install some packages
-pacman -S --noconfirm networkmanager ntfs-3g ufw dash git wget man-db pipewire \
-	pipewire-alsa pipewire-pulse pipewire-jack wireplumber linux-headers \
-	reflector polkit
+pacman -S --noconfirm base-devel dash git linux-headers man-db networkmanager \
+	ntfs-3g openssh pigz pbzip2 pipewire pipewire-alsa pipewire-jack pipewire-pulse \
+	polkit reflector ufw vim wget wireplumber
 
 # modify hooks and modules for mkinitcpio
 sed -i "s/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck)" /etc/mkinitcpio.conf

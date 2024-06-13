@@ -158,7 +158,7 @@ case "$cpu" in
 esac
 
 # install essential packages
-pacstrap /mnt base base-devel linux linux-firmware btrfs-progs "$microcode" pigzip pbzip2 vim
+pacstrap -K /mnt base linux linux-firmware btrfs-progs "$microcode"
 
 # run partprobe to reload partition table, then generate fstab file
 partprobe /dev/"$dr"
